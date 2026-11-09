@@ -1,5 +1,5 @@
 /**
- * SARGA (Share Antar Tetangga) - UI Mockup Router & Interaction Controller
+ * SARGA (Share Antar Anggota) - UI Mockup Router & Interaction Controller
  * Designed for 30+ adults with text-driven clarity, liquid glass aesthetics, and Hallmark standards.
  */
 
@@ -148,7 +148,7 @@ function updateActiveRoleBadge(hash) {
   if (!roleBadge) return;
 
   if (hash.startsWith('#/admin')) {
-    roleBadge.textContent = 'Peran: Administrator RT';
+    roleBadge.textContent = 'Peran: Administrator Organisasi';
     roleBadge.className = 'status-badge-amber text-xs font-medium';
   } else if (hash === '#/barang-saya' || hash === '#/tambah-barang') {
     roleBadge.textContent = 'Peran: Pemilik Barang';
@@ -241,7 +241,7 @@ function toggleDevNotes() {
 
 // Admin actions
 function handleApproveMember(btn) {
-  showMockToast('Warga Terverifikasi!', 'Akun Pak Agus Setiawan berhasil disetujui. Notifikasi konfirmasi akun telah dikirim ke WhatsApp pemohon (FR-AD-04).', 'success');
+  showMockToast('Anggota Terverifikasi!', 'Akun Pak Agus Setiawan berhasil disetujui. Notifikasi konfirmasi akun telah dikirim ke WhatsApp pemohon (FR-AD-04).', 'success');
   const card = btn.closest('.verification-card') || btn.closest('.space-y-6');
   if (card) {
     card.innerHTML = `
