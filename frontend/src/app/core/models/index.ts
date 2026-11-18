@@ -6,10 +6,23 @@ export type ItemStatus = 'TERSEDIA' | 'DIPINJAM' | 'PERAWATAN' | 'DIARSIPKAN';
 
 export type LoanStatus = 'MENUNGGU' | 'DISETUJUI' | 'DITOLAK' | 'AKTIF' | 'SELESAI' | 'DIBATALKAN';
 
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+  error?: string;
+  meta?: {
+    total?: number;
+    page?: number;
+    limit?: number;
+  };
+}
+
 export interface User {
   id: string;
   waNumber: string;
   fullName: string;
+  name?: string; // alias for template convenience
   address?: string;
   memberships?: Membership[];
 }
@@ -44,6 +57,7 @@ export interface Item {
   id: string;
   code: string;
   orgId: string;
+  organizationId?: string; // alias
   ownerId?: string | null;
   name: string;
   maxDays: number;
@@ -53,7 +67,12 @@ export interface Item {
   contents: string | string[];
   instructions: string;
   image: string;
+  imageUrl?: string; // alias
   isSafeAndReady: boolean;
+  totalStock?: number;
+  availableStock?: number;
+  createdAt?: string;
+  updatedAt?: string;
   owner?: { id: string; fullName: string; waNumber: string };
   organization?: { id: string; name: string };
 }

@@ -21,14 +21,14 @@ import { AuthService } from '../../core/services/auth.service';
           </div>
 
           <div class="form-group">
-            <label for="email">Email</label>
+            <label for="waNumber">Nomor WhatsApp</label>
             <input 
-              id="email" 
-              type="email" 
-              [(ngModel)]="email" 
-              name="email" 
+              id="waNumber" 
+              type="text" 
+              [(ngModel)]="waNumber" 
+              name="waNumber" 
               required 
-              placeholder="nama@email.com" 
+              placeholder="Contoh: 081234567890" 
               class="form-control"
             />
           </div>
@@ -53,11 +53,11 @@ import { AuthService } from '../../core/services/auth.service';
 
         <div class="demo-hints">
           <p class="hint-title">Akun Uji Coba Demo:</p>
-          <div class="hint-account" (click)="fillDemo('admin@sarga.id', 'Admin123!')">
-            <span>👑 Pengurus: admin&#64;sarga.id</span>
+          <div class="hint-account" (click)="fillDemo('081234567890', 'Admin123!')">
+            <span>👑 Pengurus: 081234567890 (Admin123!)</span>
           </div>
-          <div class="hint-account" (click)="fillDemo('anggota@sarga.id', 'Anggota123!')">
-            <span>👤 Anggota: anggota&#64;sarga.id</span>
+          <div class="hint-account" (click)="fillDemo('081299998888', 'Anggota123!')">
+            <span>👤 Anggota: 081299998888 (Anggota123!)</span>
           </div>
         </div>
       </div>
@@ -167,34 +167,34 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  email = '';
+  waNumber = '';
   password = '';
   loading = false;
   errorMessage = '';
 
   onSubmit(): void {
-    if (!this.email || !this.password) {
-      this.errorMessage = 'Email dan kata sandi wajib diisi.';
+    if (!this.waNumber || !this.password) {
+      this.errorMessage = 'Nomor WhatsApp dan kata sandi wajib diisi.';
       return;
     }
 
     this.loading = true;
     this.errorMessage = '';
 
-    this.authService.login({ email: this.email, password: this.password }).subscribe({
+    this.authService.login({ waNumber: this.waNumber, password: this.password }).subscribe({
       next: () => {
         this.loading = false;
         this.router.navigate(['/']);
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.error?.error || 'Gagal masuk. Periksa email dan password.';
+        this.errorMessage = err.error?.message || err.error?.error || 'Gagal masuk. Periksa nomor WhatsApp dan kata sandi.';
       }
     });
   }
 
-  fillDemo(email: string, pass: string): void {
-    this.email = email;
+  fillDemo(wa: string, pass: string): void {
+    this.waNumber = wa;
     this.password = pass;
   }
 }

@@ -35,13 +35,13 @@ import { Item } from '../../core/models';
       <div class="item-grid" *ngIf="items.length > 0; else emptyState">
         <div class="item-card" *ngFor="let item of items">
           <div class="image-wrapper">
-            <img [src]="item.imageUrl || 'assets/img/placeholder-item.svg'" [alt]="item.name" class="item-image" />
+            <img [src]="item.image || item.imageUrl || 'assets/img/placeholder-item.svg'" [alt]="item.name" class="item-image" />
             <span class="badge" [ngClass]="{
-              'badge-available': item.status === 'AVAILABLE',
-              'badge-borrowed': item.status === 'BORROWED',
-              'badge-maintenance': item.status === 'MAINTENANCE'
+              'badge-available': item.status === 'TERSEDIA',
+              'badge-borrowed': item.status === 'DIPINJAM',
+              'badge-maintenance': item.status === 'PERAWATAN'
             }">
-              {{ item.status === 'AVAILABLE' ? 'Tersedia' : (item.status === 'BORROWED' ? 'Dipinjam' : 'Perawatan') }}
+              {{ item.status === 'TERSEDIA' ? 'Tersedia' : (item.status === 'DIPINJAM' ? 'Dipinjam' : 'Perawatan') }}
             </span>
           </div>
           <div class="item-body">
@@ -50,7 +50,7 @@ import { Item } from '../../core/models';
             <p class="item-desc">{{ item.description || 'Tidak ada deskripsi' }}</p>
             <div class="item-footer">
               <span class="item-location">📍 {{ item.location || 'Gudang Utama' }}</span>
-              <button class="btn btn-sm btn-primary" [disabled]="item.status !== 'AVAILABLE'">Pinjam</button>
+              <button class="btn btn-sm btn-primary" [disabled]="item.status !== 'TERSEDIA'">Pinjam</button>
             </div>
           </div>
         </div>
@@ -205,45 +205,54 @@ export class CatalogComponent implements OnInit {
         this.items = [
           {
             id: '1',
-            organizationId: 'demo-org',
-            code: 'T-001',
+            orgId: 'demo-org',
+            code: 'ITM-001',
             name: 'Set Obeng Presisi Elektrik',
             description: 'Set obeng presisi 24 mata bor untuk perbaikan elektronik ringan.',
-            status: 'AVAILABLE',
+            status: 'TERSEDIA',
+            image: 'assets/img/obeng.jpg',
             imageUrl: 'assets/img/obeng.jpg',
+            contents: ['Obeng elektrik', '24 mata bor'],
+            instructions: 'Cas sebelum digunakan.',
             location: 'Lemari Perkakas A1',
+            maxDays: 3,
+            isSafeAndReady: true,
             totalStock: 1,
-            availableStock: 1,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            availableStock: 1
           },
           {
             id: '2',
-            organizationId: 'demo-org',
-            code: 'T-002',
+            orgId: 'demo-org',
+            code: 'ITM-002',
             name: 'Tangga Lipat Aluminium 3.8m',
             description: 'Tangga teleskopik multifungsi beban maksimal 150kg.',
-            status: 'AVAILABLE',
+            status: 'TERSEDIA',
+            image: 'assets/img/tangga.jpg',
             imageUrl: 'assets/img/tangga.jpg',
+            contents: ['Tangga teleskopik'],
+            instructions: 'Kunci tiap anak tangga.',
             location: 'Gudang Samping',
+            maxDays: 2,
+            isSafeAndReady: true,
             totalStock: 1,
-            availableStock: 1,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            availableStock: 1
           },
           {
             id: '3',
-            organizationId: 'demo-org',
-            code: 'T-003',
+            orgId: 'demo-org',
+            code: 'ITM-003',
             name: 'Tenda Dome Kapasitas 4 Orang',
             description: 'Tenda kemping tahan air double layer.',
-            status: 'BORROWED',
+            status: 'DIPINJAM',
+            image: 'assets/img/tenda.jpg',
             imageUrl: 'assets/img/tenda.jpg',
+            contents: ['Tenda inner', 'Flysheet', 'Frame'],
+            instructions: 'Keringkan sebelum disimpan.',
             location: 'Gudang Perlengkapan',
+            maxDays: 4,
+            isSafeAndReady: true,
             totalStock: 1,
-            availableStock: 0,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            availableStock: 0
           }
         ];
       }

@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import authRoutes from './routes/auth.routes';
@@ -6,11 +9,52 @@ import { errorHandler } from './middlewares/error.middleware';
 
 const app: Application = express();
 
-// Middlewares
+// Allowed origins whitelist
+const allowedOrigins = [
+  'http://localhost:4200',
+  'http://127.0.0.1:4200',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'http://localhost:5500',
+  'http://127.0.0.1:5500',
+  process.env.CORS_ORIGIN
+].filter(Boolean) as string[];
+
+// Dynamic CORS configuration
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*',
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow non-browser requests (e.g. mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+
+    // In non-production, allow any localhost/127.0.0.1 port or matched whitelist
+    if (
+      process.env.NODE_ENV !== 'production' ||
+      allowedOrigins.includes(origin) ||
+      origin.startsWith('http://localhost:') ||
+      origin.startsWith('http://127.0.0.1:')
+    ) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`CORS error: Origin ${origin} not allowed.`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'x-organization-id',
+    'X-Requested-With',
+    'Accept',
+    'Origin'
+  ],
+  exposedHeaders: ['Authorization', 'x-organization-id']
 }));
+
+// Preflight handler
+app.options('*', cors());
+
+// Parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

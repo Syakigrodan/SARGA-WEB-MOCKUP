@@ -14,7 +14,7 @@
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">Beranda</a>
       <a routerLink="/katalog" routerLinkActive="active" class="nav-item">Katalog</a>
       <ng-container *ngIf="currentUser$ | async as user; else guestNav">
-        <span class="user-greeting">Halo, {{ user.name }}</span>
+        <span class="user-greeting">Halo, {{ user.fullName }}</span>
         <button (click)="onLogout()" class="btn-link">Keluar</button>
       </ng-container>
       <ng-template #guestNav>
