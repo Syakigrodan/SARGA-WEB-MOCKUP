@@ -1,0 +1,9 @@
+# Backend .gitignore
+node_modules/
+dist/
+.env
+!.env.example
+*.log
+prisma/*.db
+prisma/*.db-journal
+*.sqlite

@@ -1,0 +1,12 @@
+# Frontend .gitignore
+node_modules/
+dist/
+.angular/
+.env
+!.env.example
+*.log
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json

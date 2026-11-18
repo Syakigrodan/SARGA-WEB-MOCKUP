@@ -1,0 +1,196 @@
+// Prisma Schema for SARGA (SRS v1.2)
+// Database: SQLite with persistent file storage
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ANGGOTA
+  ADMIN
+}
+
+enum VerificationStatus {
+  MENUNGGU_VERIFIKASI
+  TERVERIFIKASI
+  DITOLAK
+}
+
+enum ItemStatus {
+  TERSEDIA
+  DIPINJAM
+  PERAWATAN
+  DIARSIPKAN
+}
+
+enum LoanStatus {
+  MENUNGGU
+  DISETUJUI
+  DITOLAK
+  AKTIF
+  SELESAI
+  DIBATALKAN
+}
+
+model Organization {
+  id            String         @id @default(uuid())
+  name          String
+  type          String         // RT/RW, Komunitas, Kantor, Sekolah, Lainnya
+  address       String
+  contact       String
+  inviteCode    String         @unique
+  inviteExpires DateTime?
+  status        String         @default("Aktif") // Aktif, Nonaktif
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  users         User[]
+  memberships   Membership[]
+  items         Item[]
+  loans         LoanTransaction[]
+  auditLogs     AuditLog[]
+  announcements Announcement[]
+
+  @@map("organizations")
+}
+
+model User {
+  id                 String             @id @default(uuid())
+  waNumber           String             @unique
+  passwordHash       String
+  fullName           String
+  address            String
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  // Multi-organization memberships
+  memberships        Membership[]
+
+  // Items owned
+  ownedItems         Item[]             @relation("UserOwnedItems")
+
+  // Loans as borrower
+  borrowedLoans      LoanTransaction[]  @relation("UserBorrowedLoans")
+
+  // Loans as lender
+  lenderLoans        LoanTransaction[]  @relation("UserLenderLoans")
+
+  // Audit logs acted by this user
+  auditLogs          AuditLog[]         @relation("UserAudits")
+
+  // Announcements created
+  announcements      Announcement[]     @relation("UserAnnouncements")
+
+  // Primary Org reference (optional shortcut)
+  primaryOrgId       String?
+  primaryOrg         Organization?      @relation(fields: [primaryOrgId], references: [id])
+
+  @@map("users")
+}
+
+model Membership {
+  id                 String             @id @default(uuid())
+  userId             String
+  orgId              String
+  role               Role               @default(ANGGOTA)
+  position           String             @default("Anggota") // Ketua, Sekretaris, Anggota, dsb.
+  status             VerificationStatus @default(MENUNGGU_VERIFIKASI)
+  rejectionReason    String?
+
+  // Verification document per-membership
+  documentType       String?            // KTP, KTA, Kartu Identitas Karyawan, dsb.
+  documentUrl        String?            // Cloudinary URL or local file path
+  documentName       String?
+  documentNote       String?
+  address            String?            // Specific address/division in this org
+
+  joinedAt           DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization       Organization       @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, orgId])
+  @@map("memberships")
+}
+
+model Item {
+  id                 String             @id @default(uuid())
+  code               String             @unique // e.g. ITM-001, AST-001
+  orgId              String
+  ownerId            String?            // null if communal asset
+  name               String
+  maxDays            Int                @default(3)
+  location           String
+  status             ItemStatus         @default(TERSEDIA)
+  description        String
+  contents           String             // JSON string array of parts/components
+  instructions       String
+  image              String             // Cloudinary URL or asset path
+  isSafeAndReady     Boolean            @default(true)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  organization       Organization       @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  owner              User?              @relation("UserOwnedItems", fields: [ownerId], references: [id], onDelete: SetNull)
+  loans              LoanTransaction[]
+
+  @@map("items")
+}
+
+model LoanTransaction {
+  id                 String             @id @default(uuid())
+  orgId              String
+  itemId             String
+  borrowerId         String
+  ownerId            String?
+  startDate          DateTime
+  endDate            DateTime
+  status             LoanStatus         @default(MENUNGGU)
+  purpose            String
+  rejectionReason    String?
+  returnConfirmedAt  DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  organization       Organization       @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  item               Item               @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  borrower           User               @relation("UserBorrowedLoans", fields: [borrowerId], references: [id], onDelete: Cascade)
+  owner              User?              @relation("UserLenderLoans", fields: [ownerId], references: [id], onDelete: SetNull)
+
+  @@map("loan_transactions")
+}
+
+model AuditLog {
+  id                 String             @id @default(uuid())
+  orgId              String
+  actorId            String
+  action             String
+  target             String
+  note               String?
+  createdAt          DateTime           @default(now())
+
+  organization       Organization       @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  actor              User               @relation("UserAudits", fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@map("audit_logs")
+}
+
+model Announcement {
+  id                 String             @id @default(uuid())
+  orgId              String
+  authorId           String
+  title              String
+  content            String
+  createdAt          DateTime           @default(now())
+
+  organization       Organization       @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  author             User               @relation("UserAnnouncements", fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("announcements")
+}
