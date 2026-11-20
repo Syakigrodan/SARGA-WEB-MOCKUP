@@ -27,11 +27,11 @@ frontend/
 │   │   │   └── services/          # AuthService, ItemService, LoanService
 │   │   ├── features/              # Feature modules (Lazy-loadable)
 │   │   │   ├── admin/             # Panel pengurus (kelola anggota, verifikasi, audit)
-│   │   │   ├── auth/              # Login, register, formulir pengajuan anggota
-│   │   │   ├── catalog/           # Katalog alat (search, detail, filter tanpa kategori)
-│   │   │   ├── items/             # Kelola barang (tambah alat, edit)
+│   │   │   ├── auth/              # Login dan pendaftaran via kode undangan; OTP/upload menunggu API
+│   │   │   ├── catalog/           # Katalog dan detail alat; filter kategori menunggu dukungan API
+│   │   │   ├── items/             # Daftar barang baru; foto/kategori/edit menunggu dukungan API
 │   │   │   └── loans/             # Riwayat pinjaman saya & transaksi aktif
-│   │   ├── shared/                # Komponen bersama (Navbar, Modal, Alert, Form input)
+│   │   ├── shared/                # Komponen bersama (Navbar, Alert, Confirmation Dialog, Toast, Status Badge)
 │   │   ├── app.component.ts       # Shell root component
 │   │   ├── app.config.ts          # Application providers (HttpClient, Router)
 │   │   └── app.routes.ts          # Routing configuration
@@ -48,6 +48,10 @@ frontend/
 ```
 
 ---
+
+`ToastService` dan `ToastOutletComponent` menyediakan notifikasi aplikasi. `AlertComponent` digunakan
+untuk umpan balik langsung pada halaman, sedangkan `ConfirmationDialogComponent` adalah dialog native
+yang dapat dipakai ulang untuk aksi yang memerlukan konfirmasi.
 
 ## 🚀 Cara Menjalankan
 
@@ -76,3 +80,6 @@ Hasil build akan berada di direktori `dist/sarga-frontend`.
 ## 🔗 Endpoint API Backend Terhubung
 - Base URL dev: `http://localhost:5000/api/v1`
 - Autentikasi otomatis menyematkan header `Authorization: Bearer <token>` melalui `jwtInterceptor`.
+- Pendaftaran dasar memakai `POST /auth/register` dengan kode undangan; OTP WhatsApp dan unggah dokumen belum tersedia.
+- Katalog memakai `GET /items` dan `GET /items/:id`; pendaftaran barang memakai `POST /items`.
+- Filter kategori, unggah foto, edit/hapus barang, serta endpoint pinjaman dan administrasi belum tersedia.

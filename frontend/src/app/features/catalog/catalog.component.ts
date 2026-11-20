@@ -1,13 +1,18 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
+import { RouterLink } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { ItemService } from '../../core/services/item.service';
 import { Item } from '../../core/models';
+import { AlertComponent } from '../../shared/alert/alert.component';
+import { StatusBadgeComponent } from '../../shared/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink, AlertComponent, StatusBadgeComponent],
   template: `
     <div class="catalog-page">
       <header class="catalog-header">
@@ -18,49 +23,68 @@ import { Item } from '../../core/models';
       </header>
 
       <div class="search-bar">
-        <input 
-          type="text" 
-          [(ngModel)]="searchQuery" 
-          (input)="onSearch()"
-          placeholder="Cari nama alat atau kode..." 
+        <label class="visually-hidden" for="catalog-search">Cari nama barang atau kode</label>
+        <input
+          id="catalog-search"
+          type="search"
+          [(ngModel)]="searchQuery"
+          (ngModelChange)="onSearch()"
+          placeholder="Cari nama barang atau kode..."
           class="search-input"
         />
       </div>
 
-      <div class="status-summary">
+      <app-alert
+        *ngIf="errorMessage"
+        kind="error"
+        title="Katalog belum dapat dimuat"
+        [message]="errorMessage"
+      />
+      <a *ngIf="errorStatus === 401" routerLink="/auth/login" class="login-link">Masuk untuk melihat katalog</a>
+      <button *ngIf="errorMessage && errorStatus !== 401 && errorStatus !== 403"
+        type="button" class="retry-button" (click)="loadItems()">Coba lagi</button>
+
+      <p *ngIf="loading" class="loading-state" role="status" aria-live="polite">
+        Memuat katalog barang...
+      </p>
+
+      <div class="status-summary" *ngIf="!loading && !errorMessage">
         <span class="count-text">{{ items.length }} alat ditampilkan</span>
       </div>
 
-      <!-- Item Grid -->
-      <div class="item-grid" *ngIf="items.length > 0; else emptyState">
-        <div class="item-card" *ngFor="let item of items">
+      <div class="item-grid" *ngIf="!loading && !errorMessage && items.length > 0">
+        <article class="item-card" *ngFor="let item of items; let first = first">
           <div class="image-wrapper">
-            <img [src]="item.image || item.imageUrl || 'assets/img/placeholder-item.svg'" [alt]="item.name" class="item-image" />
-            <span class="badge" [ngClass]="{
-              'badge-available': item.status === 'TERSEDIA',
-              'badge-borrowed': item.status === 'DIPINJAM',
-              'badge-maintenance': item.status === 'PERAWATAN'
-            }">
-              {{ item.status === 'TERSEDIA' ? 'Tersedia' : (item.status === 'DIPINJAM' ? 'Dipinjam' : 'Perawatan') }}
-            </span>
+            <img
+              [src]="imageSource(item)"
+              [alt]="'Foto ' + item.name"
+              width="640"
+              height="360"
+              [attr.loading]="first ? 'eager' : 'lazy'"
+              [attr.fetchpriority]="first ? 'high' : 'auto'"
+              class="item-image"
+              (error)="onImageError($event)"
+            />
           </div>
           <div class="item-body">
+            <app-status-badge kind="item" [status]="item.status" />
             <span class="item-code">{{ item.code }}</span>
-            <h3 class="item-name">{{ item.name }}</h3>
+            <h2 class="item-name">
+              <a [routerLink]="['/katalog', item.id]">{{ item.name }}</a>
+            </h2>
             <p class="item-desc">{{ item.description || 'Tidak ada deskripsi' }}</p>
             <div class="item-footer">
-              <span class="item-location">📍 {{ item.location || 'Gudang Utama' }}</span>
-              <button class="btn btn-sm btn-primary" [disabled]="item.status !== 'TERSEDIA'">Pinjam</button>
+              <span class="item-location">{{ item.location || 'Lokasi belum dicantumkan' }}</span>
+              <a class="detail-link" [routerLink]="['/katalog', item.id]">Lihat detail</a>
             </div>
           </div>
-        </div>
+        </article>
       </div>
 
-      <ng-template #emptyState>
-        <div class="empty-state">
-          <p>Belum ada alat yang terdaftar atau sesuai pencarian.</p>
+      <div class="empty-state" *ngIf="!loading && !errorMessage && items.length === 0">
+          <h2>Barang tidak ditemukan</h2>
+          <p>{{ searchQuery ? 'Coba kata kunci lain.' : 'Belum ada barang yang terdaftar di organisasi ini.' }}</p>
         </div>
-      </ng-template>
     </div>
   `,
   styles: [`
@@ -84,19 +108,35 @@ import { Item } from '../../core/models';
     .search-bar {
       margin-bottom: 1rem;
     }
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
     .search-input {
       width: 100%;
       padding: 0.875rem 1.25rem;
-      border: 1px solid var(--color-rule);
+      border: 1px solid var(--color-muted-light);
       border-radius: var(--radius-input);
       font-size: 0.95rem;
       background-color: #ffffff;
-      outline: none;
       transition: border-color 0.15s ease;
     }
-    .search-input:focus {
+    .search-input:focus-visible {
       border-color: var(--color-focus);
       box-shadow: 0 0 0 3px var(--color-focus-ring);
+    }
+    .search-input:focus-visible,
+    a:focus-visible,
+    button:focus-visible {
+      outline: 2px solid var(--color-focus);
+      outline-offset: 2px;
     }
     .status-summary {
       margin-bottom: 1.25rem;
@@ -134,11 +174,6 @@ import { Item } from '../../core/models';
       height: 100%;
       object-fit: cover;
     }
-    .image-wrapper .badge {
-      position: absolute;
-      top: 0.75rem;
-      left: 0.75rem;
-    }
     .item-body {
       padding: 1.25rem;
       display: flex;
@@ -156,6 +191,14 @@ import { Item } from '../../core/models';
       font-weight: 600;
       color: var(--color-ink);
       margin: 0 0 0.5rem 0;
+    }
+    .item-name a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .item-name a:hover {
+      text-decoration: underline;
+      text-underline-offset: 0.15em;
     }
     .item-desc {
       font-size: 0.85rem;
@@ -175,91 +218,102 @@ import { Item } from '../../core/models';
       font-size: 0.8rem;
       color: var(--color-muted);
     }
-    .btn-sm {
-      padding: 0.375rem 0.875rem;
-      font-size: 0.8rem;
+    .detail-link,
+    .login-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      color: var(--color-accent);
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 0.15em;
+    }
+    .retry-button {
+      min-height: 44px;
+      padding: 0.5rem 0.875rem;
+      border: 1px solid var(--color-muted-light);
+      border-radius: var(--radius-input);
+      background: #ffffff;
+      color: var(--color-ink);
+      cursor: pointer;
+    }
+    .loading-state {
+      color: var(--color-ink);
+      padding: 1rem 0;
     }
     .empty-state {
       text-align: center;
       padding: 3rem 1rem;
       color: var(--color-muted);
     }
+    .empty-state h2 {
+      color: var(--color-ink);
+      font-size: 1.15rem;
+    }
+    @media (max-width: 600px) {
+      .item-grid {
+        grid-template-columns: 1fr;
+      }
+      .item-footer {
+        align-items: flex-start;
+        gap: 0.75rem;
+        flex-direction: column;
+      }
+    }
   `]
 })
-export class CatalogComponent implements OnInit {
+export class CatalogComponent implements OnInit, OnDestroy {
   private itemService = inject(ItemService);
+  private itemsRequest?: Subscription;
   items: Item[] = [];
   searchQuery = '';
+  loading = false;
+  errorMessage = '';
+  errorStatus = 0;
 
   ngOnInit(): void {
     this.loadItems();
   }
 
   loadItems(): void {
-    this.itemService.getItems({ search: this.searchQuery }).subscribe({
+    this.itemsRequest?.unsubscribe();
+    this.loading = true;
+    this.errorMessage = '';
+    this.errorStatus = 0;
+    this.itemsRequest = this.itemService.getItems({ search: this.searchQuery.trim() }).subscribe({
       next: (res) => {
-        this.items = res.data;
+        this.items = res.items;
+        this.loading = false;
       },
-      error: () => {
-        // Fallback demo data if backend is offline
-        this.items = [
-          {
-            id: '1',
-            orgId: 'demo-org',
-            code: 'ITM-001',
-            name: 'Set Obeng Presisi Elektrik',
-            description: 'Set obeng presisi 24 mata bor untuk perbaikan elektronik ringan.',
-            status: 'TERSEDIA',
-            image: 'assets/img/obeng.jpg',
-            imageUrl: 'assets/img/obeng.jpg',
-            contents: ['Obeng elektrik', '24 mata bor'],
-            instructions: 'Cas sebelum digunakan.',
-            location: 'Lemari Perkakas A1',
-            maxDays: 3,
-            isSafeAndReady: true,
-            totalStock: 1,
-            availableStock: 1
-          },
-          {
-            id: '2',
-            orgId: 'demo-org',
-            code: 'ITM-002',
-            name: 'Tangga Lipat Aluminium 3.8m',
-            description: 'Tangga teleskopik multifungsi beban maksimal 150kg.',
-            status: 'TERSEDIA',
-            image: 'assets/img/tangga.jpg',
-            imageUrl: 'assets/img/tangga.jpg',
-            contents: ['Tangga teleskopik'],
-            instructions: 'Kunci tiap anak tangga.',
-            location: 'Gudang Samping',
-            maxDays: 2,
-            isSafeAndReady: true,
-            totalStock: 1,
-            availableStock: 1
-          },
-          {
-            id: '3',
-            orgId: 'demo-org',
-            code: 'ITM-003',
-            name: 'Tenda Dome Kapasitas 4 Orang',
-            description: 'Tenda kemping tahan air double layer.',
-            status: 'DIPINJAM',
-            image: 'assets/img/tenda.jpg',
-            imageUrl: 'assets/img/tenda.jpg',
-            contents: ['Tenda inner', 'Flysheet', 'Frame'],
-            instructions: 'Keringkan sebelum disimpan.',
-            location: 'Gudang Perlengkapan',
-            maxDays: 4,
-            isSafeAndReady: true,
-            totalStock: 1,
-            availableStock: 0
-          }
-        ];
+      error: (error: HttpErrorResponse) => {
+        this.items = [];
+        this.errorStatus = error.status;
+        this.errorMessage = error.status === 401
+          ? 'Masuk terlebih dahulu untuk melihat katalog.'
+          : error.error?.message || 'Katalog gagal dimuat. Coba lagi.';
+        this.loading = false;
       }
     });
   }
 
   onSearch(): void {
     this.loadItems();
+  }
+
+  imageSource(item: Item): string {
+    const source = item.image || item.imageUrl;
+    if (!source || source === 'assets/placeholder-item.svg') return '/img/placeholder-item.svg';
+    return source.startsWith('assets/') ? `/${source.slice('assets/'.length)}` : source;
+  }
+
+  onImageError(event: Event): void {
+    const image = event.target;
+    if (image instanceof HTMLImageElement && !image.src.endsWith('/img/placeholder-item.svg')) {
+      image.src = '/img/placeholder-item.svg';
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.itemsRequest?.unsubscribe();
   }
 }
