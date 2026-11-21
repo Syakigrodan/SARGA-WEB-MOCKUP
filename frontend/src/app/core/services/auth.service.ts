@@ -4,6 +4,21 @@ import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { User, Membership } from '../models';
 
+export interface AuthResponse {
+  success: boolean;
+  message: string;
+  token: string;
+  user: User;
+}
+
+export interface RegisterRequest {
+  waNumber: string;
+  password: string;
+  fullName: string;
+  address?: string;
+  inviteCode: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -29,26 +44,24 @@ export class AuthService {
     return membership?.role === 'ADMIN';
   }
 
-  register(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, data).pipe(
-      tap((res: any) => {
-        if (res.token) {
-          localStorage.setItem('sarga_token', res.token);
-          this.setUser(res.user);
-        }
+  register(data: RegisterRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, data).pipe(
+      tap(response => {
+        localStorage.setItem('sarga_token', response.token);
+        this.setUser(response.user);
+        const orgId = response.user.memberships?.[0]?.orgId;
+        if (orgId) this.setActiveOrg(orgId);
       })
     );
   }
 
-  login(credentials: { waNumber: string; password: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
-      tap((res: any) => {
-        if (res.token) {
-          localStorage.setItem('sarga_token', res.token);
-          this.setUser(res.user);
-          if (res.user.memberships && res.user.memberships.length > 0) {
-            this.setActiveOrg(res.user.memberships[0].orgId);
-          }
+  login(credentials: { waNumber: string; password: string }): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
+      tap(response => {
+        localStorage.setItem('sarga_token', response.token);
+        this.setUser(response.user);
+        if (response.user.memberships && response.user.memberships.length > 0) {
+          this.setActiveOrg(response.user.memberships[0].orgId);
         }
       })
     );

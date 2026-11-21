@@ -1,0 +1,250 @@
+:host {
+  display: block;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  min-height: 64px;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+}
+
+.logo:hover {
+  opacity: 0.8;
+}
+
+.logo:active {
+  transform: translateY(1px);
+}
+
+.logo-badge {
+  font-size: 1.25rem;
+}
+
+.logo-text {
+  color: var(--color-ink);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.nav-item {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.nav-item:active {
+  text-decoration: underline;
+}
+
+.organization-picker select {
+  max-width: 220px;
+  min-height: 44px;
+  padding: 0.45rem 2rem 0.45rem 0.75rem;
+  border: 1px solid var(--color-muted);
+  border-radius: var(--radius-input);
+  background-color: #ffffff;
+  color: var(--color-ink-2);
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.organization-picker select:hover {
+  background-color: var(--color-paper-2);
+}
+
+.organization-picker select:active {
+  background-color: var(--color-paper-3);
+}
+
+.organization-status,
+.role-label,
+.user-greeting {
+  color: var(--color-ink-2);
+  font-size: 0.85rem;
+}
+
+.role-label {
+  font-weight: 600;
+}
+
+.user-greeting {
+  white-space: nowrap;
+}
+
+.btn-link {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.5rem;
+  border: 0;
+  background: transparent;
+  color: var(--color-rose-ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.btn-link:active {
+  text-decoration-thickness: 2px;
+}
+
+.menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-muted);
+  border-radius: var(--radius-input);
+  background: #ffffff;
+  color: var(--color-ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.menu-icon {
+  display: grid;
+  gap: 4px;
+}
+
+.menu-icon span {
+  display: block;
+  width: 16px;
+  height: 2px;
+  background-color: currentColor;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+a:focus-visible,
+button:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+button:hover:not(:disabled) {
+  background-color: var(--color-paper-2);
+}
+
+button:active:not(:disabled) {
+  background-color: var(--color-paper-3);
+}
+
+@media (max-width: 860px) {
+  .header-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .header-top {
+    min-height: 44px;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+  }
+
+  .nav-links {
+    display: none;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-top: 0.75rem;
+  }
+
+  .nav-links.is-open {
+    display: flex;
+  }
+
+  .nav-item,
+  .btn-link,
+  .organization-picker,
+  .organization-status,
+  .role-label,
+  .user-greeting {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .nav-item,
+  .organization-status,
+  .role-label,
+  .user-greeting {
+    display: flex;
+    align-items: center;
+  }
+
+  .organization-picker select {
+    width: 100%;
+    max-width: none;
+  }
+
+  .btn-link {
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-item {
+    transition: none;
+  }
+}

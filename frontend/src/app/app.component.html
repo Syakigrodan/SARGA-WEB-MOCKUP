@@ -1,28 +1,5 @@
-<header class="app-header">
-  <div class="header-container container">
-    <div class="header-brand">
-      <a routerLink="/" class="logo">
-        <span class="logo-badge">🌿</span>
-        <span class="logo-text">SARGA</span>
-      </a>
-      <span class="org-chip" *ngIf="currentUser$ | async as user">
-        Komunitas Graha Indah
-      </span>
-    </div>
-
-    <nav class="nav-links">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">Beranda</a>
-      <a routerLink="/katalog" routerLinkActive="active" class="nav-item">Katalog</a>
-      <ng-container *ngIf="currentUser$ | async as user; else guestNav">
-        <span class="user-greeting">Halo, {{ user.fullName }}</span>
-        <button (click)="onLogout()" class="btn-link">Keluar</button>
-      </ng-container>
-      <ng-template #guestNav>
-        <a routerLink="/auth/login" class="btn btn-sm btn-primary">Masuk</a>
-      </ng-template>
-    </nav>
-  </div>
-</header>
+<app-navbar></app-navbar>
+<app-toast-outlet></app-toast-outlet>
 
 <main class="main-content container">
   <router-outlet></router-outlet>

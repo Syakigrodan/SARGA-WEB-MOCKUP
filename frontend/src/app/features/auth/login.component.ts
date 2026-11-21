@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { AlertComponent } from '../../shared/alert/alert.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AlertComponent],
   template: `
     <div class="auth-wrapper">
       <div class="auth-card">
@@ -16,9 +17,12 @@ import { AuthService } from '../../core/services/auth.service';
         <p class="auth-subtitle">Sistem inventaris alat dan pencatatan peminjaman bersama</p>
 
         <form (ngSubmit)="onSubmit()" class="auth-form">
-          <div *ngIf="errorMessage" class="error-banner">
-            {{ errorMessage }}
-          </div>
+          <app-alert
+            *ngIf="errorMessage"
+            kind="error"
+            title="Gagal masuk"
+            [message]="errorMessage"
+          ></app-alert>
 
           <div class="form-group">
             <label for="waNumber">Nomor WhatsApp</label>
@@ -105,6 +109,10 @@ import { AuthService } from '../../core/services/auth.service';
     .form-group {
       margin-bottom: 1.25rem;
     }
+    .auth-form app-alert {
+      display: block;
+      margin-bottom: 1rem;
+    }
     .form-group label {
       display: block;
       font-size: 0.85rem;
@@ -128,15 +136,6 @@ import { AuthService } from '../../core/services/auth.service';
       width: 100%;
       padding: 0.75rem;
       margin-top: 0.5rem;
-    }
-    .error-banner {
-      background: var(--color-rose-soft);
-      color: var(--color-rose-ink);
-      border: 1px solid var(--color-rose-border);
-      padding: 0.625rem;
-      border-radius: var(--radius-input);
-      font-size: 0.85rem;
-      margin-bottom: 1rem;
     }
     .demo-hints {
       margin-top: 2rem;
