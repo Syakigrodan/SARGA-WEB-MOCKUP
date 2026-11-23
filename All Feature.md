@@ -366,13 +366,13 @@ Setiap tugas diformat dengan struktur standar di bawah ini agar rekan tim dapat 
   - **Berkas Terkait:** `backend/src/controllers/loan-return.controller.ts`, `backend/src/routes/loan.routes.ts`
   - **Catatan Teknis:** Dipicu pemilik barang atau admin organisasi. Transaksi atomik mengubah `AKTIF` → `SELESAI`, mencatat `returnConfirmedAt`, mengembalikan barang ke `TERSEDIA`, dan menulis audit `Mengonfirmasi pengembalian`. Kegagalan mutasi barang memicu rollback 409. Loan lintas org → 404; peminjam → 403.
 
-- [ ] **BE-SKI-14: Endpoint Pusat Verifikasi Calon Anggota (`GET /pending`, `PATCH /verify`, `PATCH /reject`)**
+- [x] **BE-SKI-14: Endpoint Pusat Verifikasi Calon Anggota (`GET /pending`, `PATCH /verify`, `PATCH /reject`)**
   - **Assignee / PIC:** Saki (BE)
-  - **Status:** `Belum Dimulai`
+  - **Status:** `Selesai`
   - **Target Selesai:** 2026-11-28
-  - **Tanggal Selesai:** -
-  - **Berkas Terkait:** `backend/src/controllers/membership.controller.ts`
-  - **Catatan Teknis:** Mengambil daftar calon anggota berdokumen, menyetujui mutasi status ke `TERVERIFIKASI`, atau menolak dengan alasan tertulis di `rejectionReason`.
+  - **Tanggal Selesai:** 2026-11-23
+  - **Berkas Terkait:** `backend/src/controllers/membership.controller.ts`, `backend/src/routes/membership.routes.ts`
+  - **Catatan Teknis:** Router dipasang di `/api/v1/memberships`. Admin melihat `MENUNGGU_VERIFIKASI` beserta data user dan dokumen; verify → `TERVERIFIKASI` dengan `rejectionReason = null`; reject → `DITOLAK` dengan alasan minimal 5 karakter. Audit `Memverifikasi anggota` / `Menolak anggota`; target lintas org → 404, state lain → 409.
 
 - [ ] **BE-SKI-15: Endpoint Manajemen Anggota & Proteksi Pengurus Tunggal (`PUT /memberships/:id`)**
   - **Assignee / PIC:** Saki (BE)

@@ -25,7 +25,16 @@ export async function createOrg(name: string, inviteCode: string) {
 
 export async function createMember(
   orgId: string,
-  options: { waNumber: string; fullName: string; role?: 'ADMIN' | 'ANGGOTA'; status?: 'TERVERIFIKASI' | 'MENUNGGU_VERIFIKASI' }
+  options: {
+    waNumber: string;
+    fullName: string;
+    role?: 'ADMIN' | 'ANGGOTA';
+    status?: 'TERVERIFIKASI' | 'MENUNGGU_VERIFIKASI' | 'DITOLAK';
+    documentType?: string;
+    documentUrl?: string;
+    documentName?: string;
+    documentNote?: string;
+  }
 ) {
   const passwordHash = await bcrypt.hash('rahasia123', 10);
   const user = await prisma.user.create({
@@ -43,7 +52,11 @@ export async function createMember(
       orgId,
       role: options.role ?? 'ANGGOTA',
       status: options.status ?? 'TERVERIFIKASI',
-      position: 'Anggota'
+      position: 'Anggota',
+      ...(options.documentType !== undefined ? { documentType: options.documentType } : {}),
+      ...(options.documentUrl !== undefined ? { documentUrl: options.documentUrl } : {}),
+      ...(options.documentName !== undefined ? { documentName: options.documentName } : {}),
+      ...(options.documentNote !== undefined ? { documentNote: options.documentNote } : {})
     }
   });
   const token = jwt.sign(
