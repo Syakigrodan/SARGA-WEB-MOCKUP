@@ -11,7 +11,7 @@ export const LOAN_STATUSES: LoanStatus[] = [
   'SELESAI'
 ];
 
-const itemSelect = { id: true, code: true, name: true, image: true } as const;
+const itemSelect = { id: true, code: true, name: true, image: true, status: true } as const;
 const userSelect = { id: true, fullName: true, waNumber: true } as const;
 
 export const loanInclude = {
@@ -21,7 +21,7 @@ export const loanInclude = {
 } as const;
 
 export type LoanWithRelations = LoanTransaction & {
-  item: Pick<Item, 'id' | 'code' | 'name' | 'image'>;
+  item: Pick<Item, 'id' | 'code' | 'name' | 'image' | 'status'>;
   borrower: Pick<User, 'id' | 'fullName' | 'waNumber'>;
   owner: Pick<User, 'id' | 'fullName' | 'waNumber'> | null;
 };
