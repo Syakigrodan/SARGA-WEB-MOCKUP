@@ -394,13 +394,13 @@ Setiap tugas diformat dengan struktur standar di bawah ini agar rekan tim dapat 
 
 ### Alokasi Mahendra (BE — 20% / 4 Task)
 
-- [ ] **BE-MHD-01: API CRUD Papan Pengumuman Organisasi (`/api/v1/announcements`)**
+- [x] **BE-MHD-01: API CRUD Papan Pengumuman Organisasi (`/api/v1/announcements`)**
   - **Assignee / PIC:** Mahendra (BE)
-  - **Status:** `Belum Dimulai`
+  - **Status:** `Selesai`
   - **Target Selesai:** 2026-11-26
-  - **Tanggal Selesai:** -
-  - **Berkas Terkait:** `backend/src/controllers/announcement.controller.ts`, `announcement.routes.ts`
-  - **Catatan Teknis:** Endpoint `GET /` (semua anggota), `POST /` (khusus pengurus), dan `DELETE /:id` (khusus pengurus) dengan isolasi `orgId`.
+  - **Tanggal Selesai:** 2026-11-23
+  - **Berkas Terkait:** `backend/src/controllers/announcement.controller.ts`, `backend/src/routes/announcement.routes.ts`, `backend/test/announcement.test.ts`
+  - **Catatan Teknis:** Endpoint `GET /` (anggota terverifikasi), `POST /` (khusus pengurus), dan `DELETE /:id` (khusus pengurus) dengan isolasi `orgId` dari header `x-organization-id`. Tidak ada endpoint update karena model `Announcement` tidak memiliki `updatedAt` dan spesifikasi hanya meminta GET/POST/DELETE. `orgId` dan `authorId` selalu diambil dari konteks autentikasi, bukan body.
 
 - [ ] **BE-MHD-02: API Struktur Organisasi & Penugasan Jabatan (`/api/v1/organizations/:id/structure`)**
   - **Assignee / PIC:** Mahendra (BE)

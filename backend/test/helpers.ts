@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import prisma from '../src/config/database';
 
 export async function resetDb(): Promise<void> {
+  await prisma.announcement.deleteMany();
   await prisma.auditLog.deleteMany();
   await prisma.loanTransaction.deleteMany();
   await prisma.item.deleteMany();

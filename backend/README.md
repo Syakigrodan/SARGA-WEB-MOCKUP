@@ -157,6 +157,20 @@ Respons list: `{ success, count, memberships }`. Respons mutasi: `{ success, mem
 
 `PUT /api/v1/memberships/:id` dengan body `{ "role": "ADMIN" | "ANGGOTA", "position": "<1–50 karakter>" }`. Hanya admin organisasi. Proteksi pengurus tunggal: menurunkan satu-satunya admin terverifikasi ditolak dengan 409. Audit `Mengubah peran anggota`, respons `{ success, membership, message }`. Kode status: `200`, `400` input tidak valid, `403` bukan admin, `404` target di organisasi lain, `409` admin terakhir.
 
+### Papan Pengumuman Organisasi
+
+Endpoint `/api/v1/announcements` memakai header `x-organization-id` untuk isolasi data organisasi. Anggota terverifikasi dapat membaca; hanya admin organisasi yang dapat menerbitkan dan menghapus.
+
+| Method | Endpoint | Akses | Keterangan |
+|---|---|---|---|
+| `GET` | `/` | Anggota terverifikasi | Daftar pengumuman organisasi, terbaru lebih dulu |
+| `POST` | `/` | Admin | Terbitkan pengumuman baru |
+| `DELETE` | `/:id` | Admin | Hapus pengumuman milik organisasi sendiri |
+
+Body `POST`: `{ "title": "<3–120 karakter>", "content": "<5–2000 karakter>" }`. Field `orgId` dan `authorId` diabaikan — keduanya diambil dari konteks autentikasi. `orgId` selalu berasal dari header `x-organization-id`, `authorId` dari token.
+
+Respons list: `{ success, count, announcements }`; tiap entri `{ id, title, content, createdAt, author: { id, fullName } }` dengan `createdAt` berformat ISO. Respons buat: `{ success, announcement, message: "Pengumuman berhasil diterbitkan." }` (`201`). Respons hapus: `{ success, message: "Pengumuman berhasil dihapus." }`. Kode status: `200`/`201` sukses, `400` judul/isi tidak valid, `401` token tidak ada atau pengguna tidak ditemukan, `403` token tidak valid, header `x-organization-id` tidak ada atau menunjukkan organisasi tempat pengguna bukan anggota, anggota belum terverifikasi, atau bukan admin, `404` pengumuman tidak ditemukan di organisasi ini.
+
 ### Unggah Citra dengan Watermark Forensik
 
 `POST /api/v1/uploads` menerima `multipart/form-data` pada field `image`. MIME yang didukung: `image/jpeg`, `image/png`, `image/webp`; ukuran maksimal **5 MB**. Anggota terverifikasi dapat mengunggah; konteks organisasi diambil dari header `x-organization-id`.
