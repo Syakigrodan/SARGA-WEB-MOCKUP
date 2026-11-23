@@ -138,6 +138,18 @@ Keduanya hanya berlaku untuk pinjaman `MENUNGGU`, tidak mengubah status barang, 
 
 Respons sukses: `{ "success": true, "loan": { ... }, "message": "..." }`. Kode status: `200` sukses, `403` peminjam/anggota lain, `404` loan di organisasi lain, `409` state tidak sesuai atau barang belum `DIPINJAM`.
 
+### Pusat Verifikasi Anggota
+
+Semua endpoint berikut memakai prefix `/api/v1/memberships` dan hanya untuk admin organisasi aktif.
+
+| Method | Endpoint | Keterangan |
+|---|---|---|
+| `GET` | `/pending` | Daftar `MENUNGGU_VERIFIKASI` beserta data user dan dokumen |
+| `PATCH` | `/verify` | Body `{ "membershipId": "..." }` → `TERVERIFIKASI` |
+| `PATCH` | `/reject` | Body `{ "membershipId": "...", "rejectionReason": "..." }` → `DITOLAK` |
+
+Respons list: `{ success, count, memberships }`. Respons mutasi: `{ success, membership, message }`. `rejectionReason` minimal 5 karakter; verify menghapus alasan lama. Audit: `Memverifikasi anggota` / `Menolak anggota`. Kode status: `200`, `400` validasi gagal, `403` bukan admin, `404` target di organisasi lain, `409` state bukan `MENUNGGU_VERIFIKASI`.
+
 ---
 
 ## ✅ Konvensi Pengembangan

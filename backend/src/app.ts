@@ -6,6 +6,7 @@ import cors from 'cors';
 import authRoutes from './routes/auth.routes';
 import itemRoutes from './routes/item.routes';
 import loanRoutes from './routes/loan.routes';
+import membershipRoutes from './routes/membership.routes';
 import { errorHandler } from './middlewares/error.middleware';
 
 const app: Application = express();
@@ -72,6 +73,7 @@ app.get('/api/health', (req: Request, res: Response) => {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/items', itemRoutes);
 app.use('/api/v1/loans', loanRoutes);
+app.use('/api/v1/memberships', membershipRoutes);
 
 // Error Middleware
 app.use(errorHandler);
