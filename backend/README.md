@@ -169,7 +169,7 @@ Endpoint `/api/v1/announcements` memakai header `x-organization-id` untuk isolas
 
 Body `POST`: `{ "title": "<3–120 karakter>", "content": "<5–2000 karakter>" }`. Field `orgId` dan `authorId` diabaikan — keduanya diambil dari konteks autentikasi. `orgId` selalu berasal dari header `x-organization-id`, `authorId` dari token.
 
-Respons list: `{ success, count, announcements }`; tiap entri `{ id, title, content, createdAt, author: { id, fullName } }` dengan `createdAt` berformat ISO. Respons buat: `{ success, announcement, message: "Pengumuman berhasil diterbitkan." }` (`201`). Respons hapus: `{ success, message: "Pengumuman berhasil dihapus." }`. Kode status: `200`, `201` sukses, `400` judul/isi tidak valid, `403` tanpa header organisasi/anggota belum terverifikasi/bukan admin, `404` pengumuman tidak ditemukan di organisasi ini.
+Respons list: `{ success, count, announcements }`; tiap entri `{ id, title, content, createdAt, author: { id, fullName } }` dengan `createdAt` berformat ISO. Respons buat: `{ success, announcement, message: "Pengumuman berhasil diterbitkan." }` (`201`). Respons hapus: `{ success, message: "Pengumuman berhasil dihapus." }`. Kode status: `200`/`201` sukses, `400` judul/isi tidak valid, `401` token tidak ada atau pengguna tidak ditemukan, `403` token tidak valid, header `x-organization-id` tidak ada atau menunjukkan organisasi tempat pengguna bukan anggota, anggota belum terverifikasi, atau bukan admin, `404` pengumuman tidak ditemukan di organisasi ini.
 
 ### Unggah Citra dengan Watermark Forensik
 
