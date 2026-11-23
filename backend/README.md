@@ -132,6 +132,12 @@ Respons sukses: `{ "success": true, "loan": { ... }, "message": "..." }`. Kode s
 
 Keduanya hanya berlaku untuk pinjaman `MENUNGGU`, tidak mengubah status barang, dan menulis audit berturut-turut `Menolak pinjaman` dan `Membatalkan pinjaman`. Respons memakai `{ success, loan, message }`. Kode status: `200` sukses, `400` alasan terlalu pendek, `403` tanpa izin, `404` loan di organisasi lain, `409` state tidak sesuai.
 
+### Konfirmasi Pengembalian
+
+`PATCH /api/v1/loans/:id/return` dapat dipanggil pemilik barang atau admin organisasi. Hanya pinjaman `AKTIF` yang bisa dikonfirmasi. Satu transaksi Prisma mengubah pinjaman menjadi `SELESAI` dengan `returnConfirmedAt`, mengembalikan barang menjadi `TERSEDIA`, dan menulis audit `Mengonfirmasi pengembalian`. Identitas pengonfirmasi tercatat pada `AuditLog.actorId`.
+
+Respons sukses: `{ "success": true, "loan": { ... }, "message": "..." }`. Kode status: `200` sukses, `403` peminjam/anggota lain, `404` loan di organisasi lain, `409` state tidak sesuai atau barang belum `DIPINJAM`.
+
 ---
 
 ## ✅ Konvensi Pengembangan
