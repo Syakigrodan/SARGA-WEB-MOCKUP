@@ -4,7 +4,8 @@ Repositori ini memuat seluruh aset rancangan, spesifikasi kebutuhan, prototipe a
 
 ---
 
-## 📚 Dokumen Spesifikasi
+## 📚 Dokumen Spesifikasi & Fitur
+- **Laporan Lengkap Fitur & Keamanan:** [All Feature.md](./All%20Feature.md) *(Inventarisasi seluruh fitur antarmuka mockup + fitur sensor & watermark identitas)*.
 - **Dokumen SRS Versi Markdown:** [SRS_Sarga_v1.2.md](./SRS_Sarga_v1.2.md) *(Dikonversi dari `SRS_Sarga_v1.2.pdf` untuk kemudahan analisis dan implementasi teknis)*.
 - **Dokumen SRS PDF Asli:** `SRS_Sarga_v1.2.pdf`.
 
@@ -19,6 +20,7 @@ WEB MOCKUP/
 ├── backend/               # Node.js + Express + TypeScript + Prisma ORM (SQLite)
 ├── frontend/              # Angular 19 SPA + TypeScript (Standalone Components)
 ├── mockup/                # Prototipe interaktif statis (HTML/CSS/JS - Live di Vercel)
+├── All Feature.md         # Laporan inventaris seluruh fitur antarmuka & proteksi data
 ├── SRS_Sarga_v1.2.md      # Spesifikasi Software Requirement Specification lengkap
 ├── .gitignore             # Konfigurasi filter git monorepo
 └── README.md              # Dokumentasi utama proyek
