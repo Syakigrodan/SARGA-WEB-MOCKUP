@@ -76,6 +76,36 @@ export async function createItem(
   });
 }
 
+export async function createLoan(
+  orgId: string,
+  itemId: string,
+  borrowerId: string,
+  ownerId: string,
+  overrides: {
+    status?: 'MENUNGGU' | 'AKTIF' | 'DITOLAK' | 'DIBATALKAN' | 'SELESAI';
+    startDate?: Date;
+    endDate?: Date;
+    purpose?: string;
+    rejectionReason?: string;
+    returnConfirmedAt?: Date;
+  } = {}
+) {
+  return prisma.loanTransaction.create({
+    data: {
+      orgId,
+      itemId,
+      borrowerId,
+      ownerId,
+      startDate: overrides.startDate ?? new Date(),
+      endDate: overrides.endDate ?? new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+      status: overrides.status ?? 'MENUNGGU',
+      purpose: overrides.purpose ?? 'Keperluan uji monitoring pinjaman',
+      ...(overrides.rejectionReason !== undefined ? { rejectionReason: overrides.rejectionReason } : {}),
+      ...(overrides.returnConfirmedAt !== undefined ? { returnConfirmedAt: overrides.returnConfirmedAt } : {})
+    }
+  });
+}
+
 export function futureDate(days: number): string {
   const date = new Date();
   date.setDate(date.getDate() + days);

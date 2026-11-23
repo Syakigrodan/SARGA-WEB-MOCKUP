@@ -122,6 +122,8 @@ Base URL: `http://localhost:5000/api/v1`. Endpoint yang membutuhkan konteks orga
 | `GET` | `/items/:id` | Detail barang, hanya untuk organisasi aktif |
 | `POST` | `/items` | Menambah barang ke organisasi aktif |
 | `POST` | `/loans` | Pengajuan pinjaman baru, status awal `MENUNGGU` |
+| `GET` | `/loans/me` | Riwayat pinjaman peminjam, bisa difilter `?status=` |
+| `GET` | `/loans` | Monitoring admin: filter `?status=`, `?q=`, dan `?overdue=` |
 
 Contoh body `POST /loans`:
 

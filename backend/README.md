@@ -108,6 +108,15 @@ Aturan yang divalidasi:
 
 Kode status yang mungkin: `201` sukses, `400` validasi gagal, `403` keanggotaan belum terverifikasi, `404` barang tidak ditemukan di organisasi, `409` pengajuan ganda.
 
+### Riwayat dan Monitoring Pinjaman
+
+| Method | Endpoint | Akses | Filter |
+|---|---|---|---|
+| `GET` | `/api/v1/loans/me` | Anggota terverifikasi | `?status=` |
+| `GET` | `/api/v1/loans` | Admin organisasi | `?status=`, `?q=`, `?overdue=true\|false` |
+
+Respons list: `{ "success": true, "count": 2, "loans": [...] }`. Setiap loan menyertakan `isOverdue` dan `daysOverdue`; keterlambatan hanya penanda dan tidak mengubah `status`. `q` mencari nama/kode barang atau nama peminjam. Nilai `status` yang dikenal: `MENUNGGU`, `DITOLAK`, `DIBATALKAN`, `AKTIF`, `SELESAI`.
+
 ---
 
 ## ✅ Konvensi Pengembangan

@@ -326,21 +326,21 @@ Setiap tugas diformat dengan struktur standar di bawah ini agar rekan tim dapat 
   - **Berkas Terkait:** [seed.ts](file:///c:/Users/KallKun/Desktop/Sarga%20DOC/WEB%20MOCKUP/backend/prisma/seed.ts), [app.ts](file:///c:/Users/KallKun/Desktop/Sarga%20DOC/WEB%20MOCKUP/backend/src/app.ts)
   - **Catatan Teknis:** Seeding data 2 organisasi, akun demo pengurus & anggota, 5 alat inventaris awal, serta penanganan CORS preflight OPTIONS.
 
-- [ ] **BE-SKI-09: Endpoint Pengajuan Pinjaman Barang (`POST /api/v1/loans`)**
+- [x] **BE-SKI-09: Endpoint Pengajuan Pinjaman Barang (`POST /api/v1/loans`)**
   - **Assignee / PIC:** Saki (BE)
-  - **Status:** `Dalam Pengerjaan`
+  - **Status:** `Selesai`
   - **Target Selesai:** 2026-11-25
-  - **Tanggal Selesai:** -
+  - **Tanggal Selesai:** 2026-11-23
   - **Berkas Terkait:** `backend/src/controllers/loan.controller.ts`, `loan.routes.ts`
-  - **Catatan Teknis:** Validasi ketersediaan barang, validasi rentang tanggal terhadap `maxDays`, pencegahan permohonan ganda, status awal `MENUNGGU`.
+  - **Catatan Teknis:** Validasi ketersediaan barang, validasi rentang tanggal terhadap `maxDays`, pencegahan permohonan ganda, status awal `MENUNGGU`. Respons memakai bentuk `{ success, loan, message }`.
 
-- [ ] **BE-SKI-10: Endpoint Riwayat Pinjaman Saya (`GET /api/v1/loans/me`) & Monitoring Admin (`GET /api/v1/loans`)**
+- [x] **BE-SKI-10: Endpoint Riwayat Pinjaman Saya (`GET /api/v1/loans/me`) & Monitoring Admin (`GET /api/v1/loans`)**
   - **Assignee / PIC:** Saki (BE)
-  - **Status:** `Belum Dimulai`
+  - **Status:** `Selesai`
   - **Target Selesai:** 2026-11-26
-  - **Tanggal Selesai:** -
-  - **Berkas Terkait:** `backend/src/controllers/loan.controller.ts`
-  - **Catatan Teknis:** Filter berdasarkan status peminjaman, komputasi status keterlambatan (*overdue*), dan otorisasi pengurus.
+  - **Tanggal Selesai:** 2026-11-23
+  - **Berkas Terkait:** `backend/src/controllers/loan-query.controller.ts`, `backend/src/services/loan.service.ts`
+  - **Catatan Teknis:** Filter status, pencarian `q` untuk monitoring admin, penanda `isOverdue` dan `daysOverdue` tanpa mengubah status tersimpan, serta otorisasi pengurus. Respons list memakai `{ success, count, loans }`.
 
 - [ ] **BE-SKI-11: Endpoint Persetujuan Pinjaman (`PATCH /api/v1/loans/:id/approve`)**
   - **Assignee / PIC:** Saki (BE)
