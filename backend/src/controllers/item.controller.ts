@@ -4,7 +4,7 @@ import { AuthRequest } from '../middlewares/auth.middleware';
 
 export const getCatalog = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const orgId = (req.query.orgId as string) || req.membership?.orgId;
+    const orgId = req.membership?.orgId;
     const search = (req.query.q as string)?.trim().toLowerCase();
 
     if (!orgId) {
@@ -43,8 +43,8 @@ export const getCatalog = async (req: AuthRequest, res: Response): Promise<void>
 export const getItemById = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const item = await prisma.item.findUnique({
-      where: { id },
+    const item = await prisma.item.findFirst({
+      where: { id, orgId: req.membership!.orgId },
       include: {
         owner: { select: { id: true, fullName: true, waNumber: true, address: true } },
         organization: { select: { id: true, name: true } },
@@ -69,7 +69,8 @@ export const getItemById = async (req: AuthRequest, res: Response): Promise<void
 
 export const createItem = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { orgId, name, maxDays, location, description, contents, instructions, image, isSafeAndReady } = req.body;
+    const { name, maxDays, location, description, contents, instructions, image, isSafeAndReady } = req.body;
+    const orgId = req.membership!.orgId;
     const userId = req.user?.id;
 
     if (!name || !maxDays || !location || !description || !instructions) {

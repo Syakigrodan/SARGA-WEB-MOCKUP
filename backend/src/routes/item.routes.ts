@@ -4,8 +4,8 @@ import { authenticateToken, requireActiveMember } from '../middlewares/auth.midd
 
 const router = Router();
 
-router.get('/', authenticateToken, getCatalog);
-router.get('/:id', authenticateToken, getItemById);
+router.get('/', authenticateToken, requireActiveMember, getCatalog);
+router.get('/:id', authenticateToken, requireActiveMember, getItemById);
 router.post('/', authenticateToken, requireActiveMember, createItem);
 
 export default router;
