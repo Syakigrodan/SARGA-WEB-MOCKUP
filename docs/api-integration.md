@@ -192,7 +192,7 @@ getStructure(orgId: string) {
 2. **Switcher organisasi harus memperbarui header.** Simpan `orgId` aktif di state/auth service dan pakai di interceptor; kalau user pindah organisasi, semua request berikutnya otomatis memakai org baru.
 3. **Role API vs label UI.** API memakai `ADMIN`/`ANGGOTA`; tampilan mockup memakai "Pengurus"/"Anggota". Lakukan pemetaan di frontend, jangan ubah kontrak API.
 4. **Halaman `#/struktur` dan `#/admin-bagan`** bisa memakai satu endpoint `GET /organizations/:id/structure`. Untuk mengubah jabatan/role, pakai `PUT /memberships/:id`.
-5. **Belum tersedia:** OTP WhatsApp, unggah dokumen pendaftaran lewat API, filter kategori barang, dan endpoint platform admin (`/api/v1/platform/organizations`). Tampilkan pesan "segera hadir", jangan memanggil endpoint yang belum ada.
+5. **Belum tersedia:** OTP WhatsApp, unggah dokumen pendaftaran lewat API, filter kategori barang, pengaturan/acak kode undangan (`POST /api/v1/organizations/:id/regenerate-invite`, BE-MHD-03), dan direktori organisasi platform admin (`/api/v1/platform/organizations`, BE-MHD-04). Tampilkan pesan "segera hadir", jangan memanggil endpoint yang belum ada.
 6. Semua `message` dari server aman ditampilkan langsung ke user; untuk `500` tampilkan pesan umum.
 
 ## 6. Alur umum yang disarankan
