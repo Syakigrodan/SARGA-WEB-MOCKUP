@@ -132,6 +132,9 @@ Base URL: `http://localhost:5000/api/v1`. Endpoint yang membutuhkan konteks orga
 | `PATCH` | `/memberships/verify` | Verifikasi anggota (admin) |
 | `PATCH` | `/memberships/reject` | Tolak pendaftaran anggota (admin) |
 | `PUT` | `/memberships/:id` | Ubah peran & jabatan anggota (admin) |
+| `GET` | `/announcements` | Daftar pengumuman organisasi, terbaru lebih dulu (anggota terverifikasi) |
+| `POST` | `/announcements` | Terbitkan pengumuman `{ title, content }` (admin) |
+| `DELETE` | `/announcements/:id` | Hapus pengumuman organisasi sendiri (admin) |
 | `POST` | `/uploads` | Unggah gambar + watermark forensik (`multipart/form-data`, field `image`) |
 
 Contoh body `POST /loans`:

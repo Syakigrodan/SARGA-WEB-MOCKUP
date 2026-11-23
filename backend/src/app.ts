@@ -4,6 +4,7 @@ dotenv.config();
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import path from 'path';
+import announcementRoutes from './routes/announcement.routes';
 import authRoutes from './routes/auth.routes';
 import itemRoutes from './routes/item.routes';
 import loanRoutes from './routes/loan.routes';
@@ -75,6 +76,7 @@ app.get('/api/health', (req: Request, res: Response) => {
 app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 
 // API Routes
+app.use('/api/v1/announcements', announcementRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/items', itemRoutes);
 app.use('/api/v1/loans', loanRoutes);
