@@ -12,6 +12,7 @@ RESTful API backend untuk **SARGA (Platform Peminjaman dan Berbagi Barang untuk 
 - **ORM**: Prisma ORM
 - **Autentikasi**: JWT (JSON Web Tokens) & bcryptjs
 - **Validasi**: Zod & Express Middlewares
+- **Pemrosesan Citra**: `sharp` (watermark forensik) dan `multer` (unggah memory)
 
 ---
 
@@ -27,10 +28,12 @@ backend/
 ├── src/
 │   ├── config/              # Klien Prisma dan konfigurasi lingkungan
 │   ├── controllers/         # Handler REST API (auth, item, loan)
-│   ├── middlewares/         # JWT, keanggotaan aktif, admin, error handler
+│   ├── middlewares/         # JWT, keanggotaan aktif, admin, unggah & watermark, error handler
 │   ├── routes/              # Routing endpoint API (/api/v1/...)
+│   ├── types/               # Deklarasi Express.Request.processedImage
 │   ├── app.ts               # Setup Express application
 │   └── server.ts            # Entry point listener
+├── uploads/                 # Hasil unggah per organisasi (diabaikan Git, kecuali .gitkeep)
 ├── test/
 │   ├── helpers.ts           # Reset DB dan fixture pengujian
 │   ├── setup.ts             # Environment variabel untuk tes
@@ -153,6 +156,29 @@ Respons list: `{ success, count, memberships }`. Respons mutasi: `{ success, mem
 ### Manajemen Anggota
 
 `PUT /api/v1/memberships/:id` dengan body `{ "role": "ADMIN" | "ANGGOTA", "position": "<1–50 karakter>" }`. Hanya admin organisasi. Proteksi pengurus tunggal: menurunkan satu-satunya admin terverifikasi ditolak dengan 409. Audit `Mengubah peran anggota`, respons `{ success, membership, message }`. Kode status: `200`, `400` input tidak valid, `403` bukan admin, `404` target di organisasi lain, `409` admin terakhir.
+
+### Unggah Citra dengan Watermark Forensik
+
+`POST /api/v1/uploads` menerima `multipart/form-data` pada field `image`. MIME yang didukung: `image/jpeg`, `image/png`, `image/webp`; ukuran maksimal **5 MB**. Anggota terverifikasi dapat mengunggah; konteks organisasi diambil dari header `x-organization-id`.
+
+`multer` menampung berkas di memory, lalu `sharp` menyematkan teks diagonal berulang berwarna gelap transparan dengan outline terang (terbaca pada gambar terang maupun gelap) yang berisi nama organisasi, nama dan WA pengurus penanggung jawab, serta timestamp WIB (`Asia/Jakarta`). Penanggung jawab ditentukan berurutan: uploader jika berperan `ADMIN`, admin terverifikasi pertama berdasarkan `joinedAt`, lalu `Organization.contact` jika organisasi belum punya admin. Gambar keluaran selalu JPEG kualitas 85 dan disimpan di `backend/uploads/<orgId>/<uuid>.jpg`. Isi direktori `uploads/` diabaikan Git kecuali `.gitkeep`.
+
+Respons sukses (`201`):
+
+```json
+{
+  "success": true,
+  "image": {
+    "path": "/abs/path/backend/uploads/<orgId>/<uuid>.jpg",
+    "url": "/uploads/<orgId>/<uuid>.jpg",
+    "name": "<uuid>.jpg",
+    "watermarkText": "Nama Organisasi • Nama Pengurus • WA 08xx • 23/11/2026 18:45 WIB"
+  },
+  "message": "Gambar berhasil diunggah dan diberi watermark forensik."
+}
+```
+
+Berkas dapat diakses publik melalui `GET /uploads/<orgId>/<nama>` (dilayani `express.static`). Kode status: `201` sukses, `400` MIME tidak didukung, ukuran melebihi 5 MB, atau field `image` kosong; `401`/`403` autentikasi atau keanggotaan tidak aktif.
 
 ---
 

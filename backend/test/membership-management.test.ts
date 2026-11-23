@@ -68,6 +68,19 @@ describe('BE-SKI-15: manajemen anggota', () => {
     expect(res.body.membership.role).toBe('ANGGOTA');
   });
 
+  it('dua penurunan admin bersamaan tidak menghilangkan semua admin', async () => {
+    const [first, second] = await Promise.all([
+      update(admin.membership.id, admin.token, { role: 'ANGGOTA', position: 'Anggota' }),
+      update(secondAdmin.membership.id, secondAdmin.token, { role: 'ANGGOTA', position: 'Anggota' })
+    ]);
+
+    expect([first.status, second.status].sort()).toEqual([200, 409]);
+    const adminCount = await prisma.membership.count({
+      where: { orgId: orgA.id, role: 'ADMIN', status: 'TERVERIFIKASI' }
+    });
+    expect(adminCount).toBe(1);
+  });
+
   it('role tidak valid ditolak', async () => {
     const res = await update(target.membership.id, admin.token, { role: 'OWNER', position: 'Anggota' });
 

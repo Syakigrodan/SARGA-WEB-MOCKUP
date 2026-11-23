@@ -382,13 +382,13 @@ Setiap tugas diformat dengan struktur standar di bawah ini agar rekan tim dapat 
   - **Berkas Terkait:** `backend/src/controllers/membership.controller.ts`, `backend/src/routes/membership.routes.ts`
   - **Catatan Teknis:** Admin mengubah `role` (ADMIN/ANGGOTA) dan `position` (1–50 karakter). Proteksi menolak penurunan admin terverifikasi terakhir dengan 409. Target lintas org → 404, input tidak valid → 400, audit `Mengubah peran anggota`. Respons `{ success, membership, message }`.
 
-- [ ] **BE-SKI-16: Middleware Pemrosesan Citra & Watermark Forensik (`upload.middleware.ts`)**
+- [x] **BE-SKI-16: Middleware Pemrosesan Citra & Watermark Forensik (`upload.middleware.ts`)**
   - **Assignee / PIC:** Saki (BE)
-  - **Status:** `Belum Dimulai`
+  - **Status:** `Selesai`
   - **Target Selesai:** 2026-11-30
-  - **Tanggal Selesai:** -
-  - **Berkas Terkait:** `backend/src/middlewares/upload.middleware.ts`
-  - **Catatan Teknis:** Menggunakan library `sharp` untuk menyematkan watermark diagonal permanen (nama organisasi, nama & WA pengurus penanggung jawab, timestamp) sebelum disimpan ke storage lokal/Cloudinary.
+  - **Tanggal Selesai:** 2026-11-23
+  - **Berkas Terkait:** `backend/src/middlewares/upload.middleware.ts`, `backend/src/controllers/upload.controller.ts`, `backend/src/routes/upload.routes.ts`
+  - **Catatan Teknis:** `POST /api/v1/uploads` menerima `multipart/form-data` field `image` (JPEG/PNG/WebP, maksimal 5 MB). `sharp` menyematkan watermark diagonal permanen berisi nama organisasi, nama & WA penanggung jawab, serta timestamp WIB, lalu menyimpan JPEG ke `backend/uploads/<orgId>/<uuid>.jpg`. Penanggung jawab: uploader jika admin, admin terverifikasi pertama jika bukan admin, atau `Organization.contact` jika tidak ada admin. Respons `{ success, image: { path, url, name, watermarkText }, message }`; hasil dapat diakses lewat `/uploads/<orgId>/<nama>`.
 
 ---
 
