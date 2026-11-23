@@ -402,13 +402,13 @@ Setiap tugas diformat dengan struktur standar di bawah ini agar rekan tim dapat 
   - **Berkas Terkait:** `backend/src/controllers/announcement.controller.ts`, `backend/src/routes/announcement.routes.ts`, `backend/test/announcement.test.ts`
   - **Catatan Teknis:** Endpoint `GET /` (anggota terverifikasi), `POST /` (khusus pengurus), dan `DELETE /:id` (khusus pengurus) dengan isolasi `orgId` dari header `x-organization-id`. Tidak ada endpoint update karena model `Announcement` tidak memiliki `updatedAt` dan spesifikasi hanya meminta GET/POST/DELETE. `orgId` dan `authorId` selalu diambil dari konteks autentikasi, bukan body.
 
-- [ ] **BE-MHD-02: API Struktur Organisasi & Penugasan Jabatan (`/api/v1/organizations/:id/structure`)**
+- [x] **BE-MHD-02: API Struktur Organisasi & Penugasan Jabatan (`/api/v1/organizations/:id/structure`)**
   - **Assignee / PIC:** Mahendra (BE)
-  - **Status:** `Belum Dimulai`
+  - **Status:** `Selesai`
   - **Target Selesai:** 2026-11-27
-  - **Tanggal Selesai:** -
-  - **Berkas Terkait:** `backend/src/controllers/organization.controller.ts`
-  - **Catatan Teknis:** Mengambil daftar pengurus dan hierarki divisi keanggotaan aktif untuk disajikan pada bagan publik.
+  - **Tanggal Selesai:** 2026-11-23
+  - **Berkas Terkait:** `backend/src/controllers/organization.controller.ts`, `backend/src/routes/organization.routes.ts`, `backend/test/organization-structure.test.ts`
+  - **Catatan Teknis:** `GET /:id/structure` mengembalikan data organisasi, `leaders` (role `ADMIN`), dan `members` (role `ANGGOTA`) dari keanggotaan `TERVERIFIKASI`. `:id` wajib sama dengan header `x-organization-id`. Jabatan dan label divisi memakai `Membership.position` (misalnya `Koordinator Divisi B` → `Divisi B`); `Membership.address` tidak diekspos karena dapat berisi alamat rumah. Urutan Ketua → Sekretaris → Bendahara → lainnya. Tanpa model `Division` baru karena schema maupun mockup belum mendukung hierarki bertingkat.
 
 - [ ] **BE-MHD-03: API Pengaturan Organisasi & Acak Kode Undangan (`/api/v1/organizations/:id/regenerate-invite`)**
   - **Assignee / PIC:** Mahendra (BE)

@@ -157,6 +157,23 @@ Respons list: `{ success, count, memberships }`. Respons mutasi: `{ success, mem
 
 `PUT /api/v1/memberships/:id` dengan body `{ "role": "ADMIN" | "ANGGOTA", "position": "<1–50 karakter>" }`. Hanya admin organisasi. Proteksi pengurus tunggal: menurunkan satu-satunya admin terverifikasi ditolak dengan 409. Audit `Mengubah peran anggota`, respons `{ success, membership, message }`. Kode status: `200`, `400` input tidak valid, `403` bukan admin, `404` target di organisasi lain, `409` admin terakhir.
 
+### Struktur Organisasi
+
+`GET /api/v1/organizations/:id/structure` dipakai halaman `#/struktur` dan `#/admin-bagan`. Membutuhkan `Authorization: Bearer <token>` dan header `x-organization-id`; `:id` harus sama dengan organisasi aktif pada header. Anggota terverifikasi dapat mengakses; anggota berstatus `MENUNGGU_VERIFIKASI`/`DITOLAK` ditolak.
+
+Respons sukses (`200`):
+
+```json
+{
+  "success": true,
+  "organization": { "id": "...", "name": "...", "type": "...", "address": "...", "contact": "..." },
+  "leaders": [{ "id": "...", "userId": "...", "fullName": "...", "waNumber": "...", "position": "Ketua", "division": "Divisi Timur", "role": "ADMIN", "joinedAt": "..." }],
+  "members": [{ "id": "...", "userId": "...", "fullName": "...", "waNumber": "...", "position": "Anggota", "division": null, "role": "ANGGOTA", "joinedAt": "..." }]
+}
+```
+
+`leaders` berisi role `ADMIN`, `members` berisi role `ANGGOTA`; keduanya hanya anggota `TERVERIFIKASI`. `division` diekstrak dari label divisi pada `Membership.position` (misalnya `Koordinator Divisi B` → `Divisi B`) dan bernilai `null` bila tidak ada — `Membership.address` tidak dipakai karena field pendaftarannya dapat berisi alamat rumah. `joinedAt` berformat ISO. Urutan: prioritas jabatan (Ketua → Sekretaris → Bendahara → lainnya), lalu `joinedAt` ascending, lalu `id`. Tidak ada field kata sandi atau dokumen keanggotaan di respons. Kode status: `200` sukses, `401` token tidak ada, `403` header organisasi tidak ada/anggota belum terverifikasi/`:id` bukan organisasi aktif, `404` organisasi tidak ditemukan.
+
 ### Papan Pengumuman Organisasi
 
 Endpoint `/api/v1/announcements` memakai header `x-organization-id` untuk isolasi data organisasi. Anggota terverifikasi dapat membaca; hanya admin organisasi yang dapat menerbitkan dan menghapus.
