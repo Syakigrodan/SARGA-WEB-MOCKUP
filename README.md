@@ -96,3 +96,56 @@ Direktori `mockup/` tetap terjaga utuh dan independen untuk kebutuhan presentasi
 cd mockup
 # Buka index.html di browser atau gunakan Live Server
 ```
+
+---
+
+### 4. Menjalankan Tes Backend
+```bash
+cd backend
+npm install
+npm test
+```
+Tes memakai database terpisah (`backend/prisma/test.db`) sehingga tidak mengubah data development. Script `pretest` menyiapkan skema secara otomatis.
+
+---
+
+## 🔌 Ringkasan Endpoint Backend
+
+Base URL: `http://localhost:5000/api/v1`. Endpoint yang membutuhkan konteks organisasi mengirim header `x-organization-id` bersama `Authorization: Bearer <token>`.
+
+| Method | Endpoint | Keterangan |
+|---|---|---|
+| `POST` | `/auth/register` | Pendaftaran anggota dengan kode undangan |
+| `POST` | `/auth/login` | Login, mengembalikan token dan daftar membership |
+| `GET` | `/auth/me` | Data pengguna beserta membership aktif |
+| `GET` | `/items` | Katalog barang organisasi aktif |
+| `GET` | `/items/:id` | Detail barang, hanya untuk organisasi aktif |
+| `POST` | `/items` | Menambah barang ke organisasi aktif |
+| `POST` | `/loans` | Pengajuan pinjaman baru, status awal `MENUNGGU` |
+
+Contoh body `POST /loans`:
+
+```json
+{
+  "itemId": "<uuid barang>",
+  "expectedReturnDate": "2026-11-25T10:00:00.000Z",
+  "purpose": "Keperluan presentasi rapat tim mingguan"
+}
+```
+
+Respons sukses memakai bentuk `{ success, loan, message }`. Validasi yang diterapkan: barang harus tersedia dan berada di organisasi yang sama, bukan milik peminjam, tanggal tidak boleh di masa lalu, durasi tidak melebihi `maxDays`, dan tidak ada pengajuan `MENUNGGU` ganda untuk barang yang sama.
+
+> **Catatan frontend:** `LoanService` saat ini masih menyiapkan tipe `{ success, data }`. Perlu diselaraskan dengan bentuk respons di atas oleh tim frontend.
+
+---
+
+## ✅ Konvensi Pengembangan Tim
+
+Berlaku untuk setiap fitur baru, baik perubahan backend, frontend, maupun mockup:
+
+1. **Modular.** Pisahkan routing, handler, dan logika bisnis. Tambahkan `services/` hanya ketika logika mulai dipakai ulang, bukan untuk memindahkan satu fungsi.
+2. **Batas ukuran file.** Satu file sumber tidak boleh lebih dari **1.000 baris**. Jika mendekati batas, pecah menjadi beberapa file sebelum menambah kode lagi. File generate seperti `package-lock.json` dan aset biner tidak termasuk aturan ini.
+3. **Perbarui dokumentasi.** Setiap fitur baru wajib diiringi pembaruan `README.md` yang relevan, baik dokumentasi root maupun dokumentasi modul.
+4. **Tes terlebih dahulu.** Tulis tes yang gagal, jalankan untuk memastikan kegagalannya, lalu tulis implementasi minimal, dan jalankan seluruh suite sampai hijau. `npm test` di `backend/` adalah gerbang sebelum PR.
+
+Konvensi ini berasal dari catatan Haikal dan disepakati untuk dipakai seluruh tim.
