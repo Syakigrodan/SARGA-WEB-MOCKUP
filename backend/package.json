@@ -10,7 +10,9 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "ts-node prisma/seed.ts",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "pretest": "node scripts/prepare-test-db.js",
+    "test": "vitest run"
   },
   "keywords": ["sarga", "express", "typescript", "prisma", "sqlite", "rest-api"],
   "author": "Tim Pengembang SARGA",
@@ -32,9 +34,12 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.13.5",
+    "@types/supertest": "^6.0.3",
     "prisma": "^6.4.0",
+    "supertest": "^7.3.2",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vitest": "^3.2.7"
   }
 }
