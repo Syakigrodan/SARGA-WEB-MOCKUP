@@ -374,13 +374,13 @@ Setiap tugas diformat dengan struktur standar di bawah ini agar rekan tim dapat 
   - **Berkas Terkait:** `backend/src/controllers/membership.controller.ts`, `backend/src/routes/membership.routes.ts`
   - **Catatan Teknis:** Router dipasang di `/api/v1/memberships`. Admin melihat `MENUNGGU_VERIFIKASI` beserta data user dan dokumen; verify → `TERVERIFIKASI` dengan `rejectionReason = null`; reject → `DITOLAK` dengan alasan minimal 5 karakter. Audit `Memverifikasi anggota` / `Menolak anggota`; target lintas org → 404, state lain → 409.
 
-- [ ] **BE-SKI-15: Endpoint Manajemen Anggota & Proteksi Pengurus Tunggal (`PUT /memberships/:id`)**
+- [x] **BE-SKI-15: Endpoint Manajemen Anggota & Proteksi Pengurus Tunggal (`PUT /memberships/:id`)**
   - **Assignee / PIC:** Saki (BE)
-  - **Status:** `Belum Dimulai`
+  - **Status:** `Selesai`
   - **Target Selesai:** 2026-11-29
-  - **Tanggal Selesai:** -
-  - **Berkas Terkait:** `backend/src/controllers/membership.controller.ts`
-  - **Catatan Teknis:** Perubahan peran (Role: ADMIN/ANGGOTA) dan jabatan, serta validasi penolakan jika pengurus aktif tersisa $\le 1$.
+  - **Tanggal Selesai:** 2026-11-23
+  - **Berkas Terkait:** `backend/src/controllers/membership.controller.ts`, `backend/src/routes/membership.routes.ts`
+  - **Catatan Teknis:** Admin mengubah `role` (ADMIN/ANGGOTA) dan `position` (1–50 karakter). Proteksi menolak penurunan admin terverifikasi terakhir dengan 409. Target lintas org → 404, input tidak valid → 400, audit `Mengubah peran anggota`. Respons `{ success, membership, message }`.
 
 - [ ] **BE-SKI-16: Middleware Pemrosesan Citra & Watermark Forensik (`upload.middleware.ts`)**
   - **Assignee / PIC:** Saki (BE)
