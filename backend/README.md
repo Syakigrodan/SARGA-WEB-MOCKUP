@@ -150,6 +150,10 @@ Semua endpoint berikut memakai prefix `/api/v1/memberships` dan hanya untuk admi
 
 Respons list: `{ success, count, memberships }`. Respons mutasi: `{ success, membership, message }`. `rejectionReason` minimal 5 karakter; verify menghapus alasan lama. Audit: `Memverifikasi anggota` / `Menolak anggota`. Kode status: `200`, `400` validasi gagal, `403` bukan admin, `404` target di organisasi lain, `409` state bukan `MENUNGGU_VERIFIKASI`.
 
+### Manajemen Anggota
+
+`PUT /api/v1/memberships/:id` dengan body `{ "role": "ADMIN" | "ANGGOTA", "position": "<1–50 karakter>" }`. Hanya admin organisasi. Proteksi pengurus tunggal: menurunkan satu-satunya admin terverifikasi ditolak dengan 409. Audit `Mengubah peran anggota`, respons `{ success, membership, message }`. Kode status: `200`, `400` input tidak valid, `403` bukan admin, `404` target di organisasi lain, `409` admin terakhir.
+
 ---
 
 ## ✅ Konvensi Pengembangan

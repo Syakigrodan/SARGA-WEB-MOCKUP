@@ -131,6 +131,7 @@ Base URL: `http://localhost:5000/api/v1`. Endpoint yang membutuhkan konteks orga
 | `GET` | `/memberships/pending` | Calon anggota menunggu verifikasi (admin) |
 | `PATCH` | `/memberships/verify` | Verifikasi anggota (admin) |
 | `PATCH` | `/memberships/reject` | Tolak pendaftaran anggota (admin) |
+| `PUT` | `/memberships/:id` | Ubah peran & jabatan anggota (admin) |
 
 Contoh body `POST /loans`:
 

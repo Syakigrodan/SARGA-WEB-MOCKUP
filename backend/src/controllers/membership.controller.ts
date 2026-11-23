@@ -131,3 +131,71 @@ export const rejectMember = async (req: AuthRequest, res: Response): Promise<voi
     respondError(res, error);
   }
 };
+
+const requestedRole = (value: unknown): 'ADMIN' | 'ANGGOTA' => {
+  if (value !== 'ADMIN' && value !== 'ANGGOTA') {
+    throw new HttpError(400, 'Peran harus bernilai ADMIN atau ANGGOTA.');
+  }
+  return value;
+};
+
+const requestedPosition = (value: unknown): string => {
+  if (typeof value !== 'string') {
+    throw new HttpError(400, 'Jabatan wajib diisi.');
+  }
+  const position = value.trim();
+  if (position.length === 0 || position.length > 50) {
+    throw new HttpError(400, 'Jabatan wajib diisi dan maksimal 50 karakter.');
+  }
+  return position;
+};
+
+export const updateMember = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const orgId = req.membership!.orgId;
+    const id = req.params.id;
+    const role = requestedRole(req.body?.role);
+    const position = requestedPosition(req.body?.position);
+    const membership = await findMembershipForOrg(id, orgId);
+
+    if (!membership) {
+      res.status(404).json({ success: false, message: 'Keanggotaan tidak ditemukan di organisasi ini.' });
+      return;
+    }
+
+    if (
+      membership.role === 'ADMIN' &&
+      membership.status === 'TERVERIFIKASI' &&
+      role === 'ANGGOTA'
+    ) {
+      const adminCount = await prisma.membership.count({
+        where: { orgId, role: 'ADMIN', status: 'TERVERIFIKASI' }
+      });
+      if (adminCount <= 1) {
+        res.status(409).json({
+          success: false,
+          message: 'Organisasi harus memiliki minimal satu pengurus terverifikasi.'
+        });
+        return;
+      }
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.membership.update({ where: { id, orgId }, data: { role, position } });
+      await tx.auditLog.create({
+        data: {
+          orgId,
+          actorId: req.user!.id,
+          action: 'Mengubah peran anggota',
+          target: id,
+          note: `Peran ${role}, jabatan ${position}.`
+        }
+      });
+    });
+
+    const updated = await findMembershipForOrg(id, orgId);
+    res.json({ success: true, membership: updated, message: 'Data keanggotaan diperbarui.' });
+  } catch (error) {
+    respondError(res, error);
+  }
+};
