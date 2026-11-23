@@ -73,10 +73,18 @@ describe('BE-SKI-16: unggah citra dengan watermark forensik', () => {
 
     const filePath = path.resolve(process.cwd(), 'uploads', orgA.id, path.basename(res.body.image.url));
     expect(fs.existsSync(filePath)).toBe(true);
-    const metadata = await sharp(fs.readFileSync(filePath)).metadata();
+    const output = fs.readFileSync(filePath);
+    const metadata = await sharp(output).metadata();
     expect(metadata.format).toBe('jpeg');
     expect(metadata.width).toBe(400);
     expect(metadata.height).toBe(300);
+
+    const raw = await sharp(output).removeAlpha().raw().toBuffer();
+    let darkPixels = 0;
+    for (let i = 0; i < raw.length; i += 3) {
+      if (raw[i] < 240) darkPixels += 1;
+    }
+    expect(darkPixels).toBeGreaterThan(50);
   });
 
   it('MIME bukan gambar ditolak 400', async () => {
@@ -86,6 +94,19 @@ describe('BE-SKI-16: unggah citra dengan watermark forensik', () => {
       Buffer.from('bukan gambar'),
       'catatan.txt',
       'text/plain'
+    );
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+  });
+
+  it('MIME gambar tetapi isi bukan gambar ditolak 400', async () => {
+    const res = await upload(
+      uploader.token,
+      orgA.id,
+      Buffer.from('bukan gambar'),
+      'palsu.png',
+      'image/png'
     );
 
     expect(res.status).toBe(400);

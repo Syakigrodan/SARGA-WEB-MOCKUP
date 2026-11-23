@@ -420,7 +420,7 @@ it('tanpa admin terverifikasi memakai Organization.contact', async () => {
 
 Tambah deklarasi `Express.Request.processedImage?: { path: string; url: string; name: string; watermarkText: string }` di `src/types/express.d.ts`.
 
-`watermarkImage`: tentukan actor: uploader jika `role === 'ADMIN'`, else `prisma.membership.findFirst({ where: { orgId, role: 'ADMIN', status: 'TERVERIFIKASI' }, orderBy: { joinedAt: 'asc' }, include: { user: true } })`, else fallback `Organization.contact`. Bangun teks: `nama org • nama actor • WA • timestamp WIB` (format `Asia/Jakarta`). Escape XML. Buat SVG overlay diagonal berulang dengan `fill="rgba(255,255,255,0.55)"`, komposit dengan `sharp(req.file.buffer).composite(...)`, `.jpeg({ quality: 85 }).toBuffer()`. Simpan ke `path.resolve(process.cwd(), 'uploads', orgId, `${randomUUID()}.jpg`)`, `mkdir recursive`. Set `req.processedImage`.
+`watermarkImage`: tentukan actor: uploader jika `role === 'ADMIN'`, else `prisma.membership.findFirst({ where: { orgId, role: 'ADMIN', status: 'TERVERIFIKASI' }, orderBy: { joinedAt: 'asc' }, include: { user: true } })`, else fallback `Organization.contact`. Bangun teks: `nama org • nama actor • WA • timestamp WIB` (format `Asia/Jakarta`). Escape XML. Buat SVG overlay diagonal berulang dengan `fill="rgba(0,0,0,0.45)"` dan stroke terang agar terbaca pada gambar gelap (koreksi hasil review: warna putih tidak terlihat pada dokumen putih), komposit dengan `sharp(req.file.buffer).composite(...)`, `.jpeg({ quality: 85 }).toBuffer()`. Simpan ke `path.resolve(process.cwd(), 'uploads', orgId, `${randomUUID()}.jpg`)`, `mkdir recursive`. Set `req.processedImage`.
 
 - [ ] **Step 4: Implementasi controller + route + static**
 

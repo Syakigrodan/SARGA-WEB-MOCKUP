@@ -3,15 +3,7 @@ import prisma from '../config/database';
 import { AuthRequest } from '../middlewares/auth.middleware';
 import { findLoanForOrg, toLoanView } from '../services/loan.service';
 import { HttpError } from '../utils/http-error';
-
-const respondError = (res: Response, error: unknown): void => {
-  if (error instanceof HttpError) {
-    res.status(error.statusCode).json({ success: false, message: error.message });
-    return;
-  }
-  const message = error instanceof Error ? error.message : 'Terjadi kesalahan internal.';
-  res.status(500).json({ success: false, message });
-};
+import { respondError } from '../utils/respond-error';
 
 export const returnLoan = async (req: AuthRequest, res: Response): Promise<void> => {
   try {

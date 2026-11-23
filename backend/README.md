@@ -161,7 +161,7 @@ Respons list: `{ success, count, memberships }`. Respons mutasi: `{ success, mem
 
 `POST /api/v1/uploads` menerima `multipart/form-data` pada field `image`. MIME yang didukung: `image/jpeg`, `image/png`, `image/webp`; ukuran maksimal **5 MB**. Anggota terverifikasi dapat mengunggah; konteks organisasi diambil dari header `x-organization-id`.
 
-`multer` menampung berkas di memory, lalu `sharp` menyematkan teks diagonal berulang yang berisi nama organisasi, nama dan WA pengurus penanggung jawab, serta timestamp WIB (`Asia/Jakarta`). Penanggung jawab ditentukan berurutan: uploader jika berperan `ADMIN`, admin terverifikasi pertama berdasarkan `joinedAt`, lalu `Organization.contact` jika organisasi belum punya admin. Gambar keluaran selalu JPEG kualitas 85 dan disimpan di `backend/uploads/<orgId>/<uuid>.jpg`. Isi direktori `uploads/` diabaikan Git kecuali `.gitkeep`.
+`multer` menampung berkas di memory, lalu `sharp` menyematkan teks diagonal berulang berwarna gelap transparan dengan outline terang (terbaca pada gambar terang maupun gelap) yang berisi nama organisasi, nama dan WA pengurus penanggung jawab, serta timestamp WIB (`Asia/Jakarta`). Penanggung jawab ditentukan berurutan: uploader jika berperan `ADMIN`, admin terverifikasi pertama berdasarkan `joinedAt`, lalu `Organization.contact` jika organisasi belum punya admin. Gambar keluaran selalu JPEG kualitas 85 dan disimpan di `backend/uploads/<orgId>/<uuid>.jpg`. Isi direktori `uploads/` diabaikan Git kecuali `.gitkeep`.
 
 Respons sukses (`201`):
 

@@ -3,18 +3,10 @@ import prisma from '../config/database';
 import { AuthRequest } from '../middlewares/auth.middleware';
 import { findLoanForOrg, toLoanView } from '../services/loan.service';
 import { HttpError } from '../utils/http-error';
+import { respondError } from '../utils/respond-error';
 
 const canDecide = (req: AuthRequest, ownerId: string | null): boolean =>
   req.membership!.role === 'ADMIN' || ownerId === req.user!.id;
-
-const respondError = (res: Response, error: unknown): void => {
-  if (error instanceof HttpError) {
-    res.status(error.statusCode).json({ success: false, message: error.message });
-    return;
-  }
-  const message = error instanceof Error ? error.message : 'Terjadi kesalahan internal.';
-  res.status(500).json({ success: false, message });
-};
 
 export const approveLoan = async (req: AuthRequest, res: Response): Promise<void> => {
   try {

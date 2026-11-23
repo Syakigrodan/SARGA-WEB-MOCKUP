@@ -2,19 +2,11 @@ import { Response } from 'express';
 import prisma from '../config/database';
 import { AuthRequest } from '../middlewares/auth.middleware';
 import { HttpError } from '../utils/http-error';
+import { respondError } from '../utils/respond-error';
 
 const membershipInclude = {
   user: { select: { id: true, fullName: true, waNumber: true, address: true } }
 } as const;
-
-const respondError = (res: Response, error: unknown): void => {
-  if (error instanceof HttpError) {
-    res.status(error.statusCode).json({ success: false, message: error.message });
-    return;
-  }
-  const message = error instanceof Error ? error.message : 'Terjadi kesalahan internal.';
-  res.status(500).json({ success: false, message });
-};
 
 const findMembershipForOrg = (id: string, orgId: string) =>
   prisma.membership.findFirst({
@@ -163,25 +155,23 @@ export const updateMember = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
-    if (
+    const demotesAdmin =
       membership.role === 'ADMIN' &&
       membership.status === 'TERVERIFIKASI' &&
-      role === 'ANGGOTA'
-    ) {
-      const adminCount = await prisma.membership.count({
-        where: { orgId, role: 'ADMIN', status: 'TERVERIFIKASI' }
-      });
-      if (adminCount <= 1) {
-        res.status(409).json({
-          success: false,
-          message: 'Organisasi harus memiliki minimal satu pengurus terverifikasi.'
-        });
-        return;
-      }
-    }
+      role === 'ANGGOTA';
 
     await prisma.$transaction(async (tx) => {
       await tx.membership.update({ where: { id, orgId }, data: { role, position } });
+
+      if (demotesAdmin) {
+        const adminCount = await tx.membership.count({
+          where: { orgId, role: 'ADMIN', status: 'TERVERIFIKASI' }
+        });
+        if (adminCount === 0) {
+          throw new HttpError(409, 'Organisasi harus memiliki minimal satu pengurus terverifikasi.');
+        }
+      }
+
       await tx.auditLog.create({
         data: {
           orgId,

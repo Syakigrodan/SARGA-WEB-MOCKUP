@@ -88,7 +88,7 @@ const buildWatermarkSvg = (width: number, height: number, text: string): Buffer 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">` +
     `<g transform="rotate(-30 ${width / 2} ${height / 2})" ` +
     'font-family="sans-serif" font-size="18" font-weight="600" ' +
-    'fill="rgba(255,255,255,0.55)">' +
+    'fill="rgba(0,0,0,0.45)" stroke="rgba(255,255,255,0.35)" stroke-width="0.6">' +
     labels.join('') +
     '</g></svg>';
 
@@ -133,7 +133,13 @@ export const watermarkImage = async (
   try {
     const orgId = req.membership!.orgId;
     const watermarkText = await resolveWatermarkText(req);
-    const metadata = await sharp(req.file!.buffer).metadata();
+
+    let metadata;
+    try {
+      metadata = await sharp(req.file!.buffer).metadata();
+    } catch {
+      throw new HttpError(400, 'Isi berkas bukan gambar yang valid.');
+    }
     const width = metadata.width ?? 1;
     const height = metadata.height ?? 1;
 
@@ -156,6 +162,6 @@ export const watermarkImage = async (
     };
     next();
   } catch (error) {
-    next(new HttpError(500, error instanceof Error ? error.message : 'Gagal memproses gambar.'));
+    next(error instanceof HttpError ? error : new HttpError(500, 'Gagal memproses gambar.'));
   }
 };
