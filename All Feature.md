@@ -408,7 +408,7 @@ Setiap tugas diformat dengan struktur standar di bawah ini agar rekan tim dapat 
   - **Target Selesai:** 2026-11-27
   - **Tanggal Selesai:** 2026-11-23
   - **Berkas Terkait:** `backend/src/controllers/organization.controller.ts`, `backend/src/routes/organization.routes.ts`, `backend/test/organization-structure.test.ts`
-  - **Catatan Teknis:** `GET /:id/structure` mengembalikan data organisasi, `leaders` (role `ADMIN`), dan `members` (role `ANGGOTA`) dari keanggotaan `TERVERIFIKASI`. `:id` wajib sama dengan header `x-organization-id`. Jabatan memakai `Membership.position`, label divisi memakai `Membership.address`; urutan Ketua → Sekretaris → Bendahara → lainnya. Tanpa model `Division` baru karena schema maupun mockup belum mendukung hierarki bertingkat.
+  - **Catatan Teknis:** `GET /:id/structure` mengembalikan data organisasi, `leaders` (role `ADMIN`), dan `members` (role `ANGGOTA`) dari keanggotaan `TERVERIFIKASI`. `:id` wajib sama dengan header `x-organization-id`. Jabatan dan label divisi memakai `Membership.position` (misalnya `Koordinator Divisi B` → `Divisi B`); `Membership.address` tidak diekspos karena dapat berisi alamat rumah. Urutan Ketua → Sekretaris → Bendahara → lainnya. Tanpa model `Division` baru karena schema maupun mockup belum mendukung hierarki bertingkat.
 
 - [ ] **BE-MHD-03: API Pengaturan Organisasi & Acak Kode Undangan (`/api/v1/organizations/:id/regenerate-invite`)**
   - **Assignee / PIC:** Mahendra (BE)

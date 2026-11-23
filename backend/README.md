@@ -172,7 +172,7 @@ Respons sukses (`200`):
 }
 ```
 
-`leaders` berisi role `ADMIN`, `members` berisi role `ANGGOTA`; keduanya hanya anggota `TERVERIFIKASI`. `division` diambil dari `Membership.address` (boleh `null`) dan `joinedAt` berformat ISO. Urutan: prioritas jabatan (Ketua → Sekretaris → Bendahara → lainnya), lalu `joinedAt` ascending, lalu `id`. Tidak ada field kata sandi atau dokumen keanggotaan di respons. Kode status: `200` sukses, `401` token tidak ada, `403` header organisasi tidak ada/anggota belum terverifikasi/`:id` bukan organisasi aktif, `404` organisasi tidak ditemukan.
+`leaders` berisi role `ADMIN`, `members` berisi role `ANGGOTA`; keduanya hanya anggota `TERVERIFIKASI`. `division` diekstrak dari label divisi pada `Membership.position` (misalnya `Koordinator Divisi B` → `Divisi B`) dan bernilai `null` bila tidak ada — `Membership.address` tidak dipakai karena field pendaftarannya dapat berisi alamat rumah. `joinedAt` berformat ISO. Urutan: prioritas jabatan (Ketua → Sekretaris → Bendahara → lainnya), lalu `joinedAt` ascending, lalu `id`. Tidak ada field kata sandi atau dokumen keanggotaan di respons. Kode status: `200` sukses, `401` token tidak ada, `403` header organisasi tidak ada/anggota belum terverifikasi/`:id` bukan organisasi aktif, `404` organisasi tidak ditemukan.
 
 ### Papan Pengumuman Organisasi
 

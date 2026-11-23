@@ -30,7 +30,7 @@ describe('BE-MHD-02: struktur organisasi', () => {
 
   it('GET mengembalikan struktur organisasi aktif, leaders dan members terpisah, urut prioritas jabatan', async () => {
     await createMember(orgA.id, { waNumber: '081200000082', fullName: 'Sekretaris Struktur', role: 'ADMIN', position: 'Sekretaris' });
-    await createMember(orgA.id, { waNumber: '081200000083', fullName: 'Bendahara Struktur', position: 'Bendahara', address: 'Divisi Keuangan' });
+    await createMember(orgA.id, { waNumber: '081200000083', fullName: 'Bendahara Struktur', position: 'Bendahara Divisi Keuangan', address: 'Blok C No. 04' });
     await createMember(orgA.id, { waNumber: '081200000084', fullName: 'Anggota Biasa', position: 'Anggota' });
 
     const res = await request(app).get(`/api/v1/organizations/${orgA.id}/structure`).set(auth(admin.token, orgA.id));
@@ -41,9 +41,10 @@ describe('BE-MHD-02: struktur organisasi', () => {
       id: orgA.id, name: orgA.name, type: orgA.type, address: orgA.address, contact: orgA.contact
     });
     expect(res.body.leaders.map((m: any) => m.position)).toEqual(['Ketua', 'Sekretaris']);
-    expect(res.body.members.map((m: any) => m.position)).toEqual(['Bendahara', 'Anggota']);
+    expect(res.body.members.map((m: any) => m.position)).toEqual(['Bendahara Divisi Keuangan', 'Anggota']);
     expect(res.body.members[0].division).toBe('Divisi Keuangan');
     expect(res.body.members[1].division).toBeNull();
+    expect(JSON.stringify(res.body)).not.toContain('Blok C No. 04');
     expect(res.body.leaders[0]).toMatchObject({
       userId: admin.user.id,
       fullName: 'Ketua Struktur',
@@ -95,6 +96,35 @@ describe('BE-MHD-02: struktur organisasi', () => {
     const res = await request(app).get(`/api/v1/organizations/${orgA.id}/structure`)
       .set('x-organization-id', orgA.id);
     expect(res.status).toBe(401);
+  });
+
+  it('GET dapat diakses anggota terverifikasi, bukan hanya admin', async () => {
+    const anggota = await createMember(orgA.id, {
+      waNumber: '081200000091', fullName: 'Anggota Terverifikasi'
+    });
+
+    const res = await request(app).get(`/api/v1/organizations/${orgA.id}/structure`).set(auth(anggota.token, orgA.id));
+
+    expect(res.status).toBe(200);
+    expect(res.body.leaders.map((m: any) => m.fullName)).toEqual(['Ketua Struktur']);
+    expect(res.body.members.map((m: any) => m.fullName)).toEqual(['Anggota Terverifikasi']);
+  });
+
+  it('GET mengurutkan jabatan yang sama berdasarkan joinedAt', async () => {
+    await createMember(orgA.id, {
+      waNumber: '081200000092', fullName: 'Lebih Awal', position: 'Anggota',
+      joinedAt: new Date('2020-01-01T00:00:00.000Z')
+    });
+    await createMember(orgA.id, {
+      waNumber: '081200000093', fullName: 'Lebih Baru', position: 'Anggota',
+      joinedAt: new Date('2025-01-01T00:00:00.000Z')
+    });
+
+    const res = await request(app).get(`/api/v1/organizations/${orgA.id}/structure`).set(auth(admin.token, orgA.id));
+
+    expect(res.status).toBe(200);
+    const names = res.body.members.map((m: any) => m.fullName).filter((name: string) => name.startsWith('Lebih '));
+    expect(names).toEqual(['Lebih Awal', 'Lebih Baru']);
   });
 
   it('GET tidak membocorkan data sensitif', async () => {

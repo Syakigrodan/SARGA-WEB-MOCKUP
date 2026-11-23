@@ -21,6 +21,11 @@ const positionRank = (position: string): number => {
   return 99;
 };
 
+const divisionFromPosition = (position: string): string | null => {
+  const match = position.match(/\b(divisi|unit|bagian|bidang|seksi|ruang)\b[\s-]*\S.*$/i);
+  return match ? match[0].trim() : null;
+};
+
 const compareMembers = (a: StructureMemberView, b: StructureMemberView): number => {
   const rank = positionRank(a.position) - positionRank(b.position);
   if (rank !== 0) return rank;
@@ -60,7 +65,7 @@ export const getOrganizationStructure = async (req: AuthRequest, res: Response):
       fullName: membership.user.fullName,
       waNumber: membership.user.waNumber,
       position: membership.position,
-      division: membership.address,
+      division: divisionFromPosition(membership.position),
       role: membership.role,
       joinedAt: membership.joinedAt.toISOString()
     }));
