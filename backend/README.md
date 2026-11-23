@@ -123,6 +123,15 @@ Respons list: `{ "success": true, "count": 2, "loans": [...] }`. Setiap loan men
 
 Respons sukses: `{ "success": true, "loan": { ... }, "message": "..." }`. Kode status: `200` sukses, `403` bukan pemilik/admin, `404` loan di organisasi lain, `409` state tidak sesuai atau barang tidak tersedia.
 
+### Penolakan dan Pembatalan
+
+| Method | Endpoint | Akses | Syarat |
+|---|---|---|---|
+| `PATCH` | `/api/v1/loans/:id/reject` | Pemilik barang atau admin | `rejectionReason` minimal 5 karakter |
+| `PATCH` | `/api/v1/loans/:id/cancel` | Peminjam saja | Pinjaman masih `MENUNGGU` |
+
+Keduanya hanya berlaku untuk pinjaman `MENUNGGU`, tidak mengubah status barang, dan menulis audit berturut-turut `Menolak pinjaman` dan `Membatalkan pinjaman`. Respons memakai `{ success, loan, message }`. Kode status: `200` sukses, `400` alasan terlalu pendek, `403` tanpa izin, `404` loan di organisasi lain, `409` state tidak sesuai.
+
 ---
 
 ## ✅ Konvensi Pengembangan
