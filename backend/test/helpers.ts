@@ -35,6 +35,9 @@ export async function createMember(
     documentUrl?: string;
     documentName?: string;
     documentNote?: string;
+    position?: string;
+    address?: string;
+    joinedAt?: Date;
   }
 ) {
   const passwordHash = await bcrypt.hash('rahasia123', 10);
@@ -53,7 +56,9 @@ export async function createMember(
       orgId,
       role: options.role ?? 'ANGGOTA',
       status: options.status ?? 'TERVERIFIKASI',
-      position: 'Anggota',
+      position: options.position ?? 'Anggota',
+      ...(options.address !== undefined ? { address: options.address } : {}),
+      ...(options.joinedAt !== undefined ? { joinedAt: options.joinedAt } : {}),
       ...(options.documentType !== undefined ? { documentType: options.documentType } : {}),
       ...(options.documentUrl !== undefined ? { documentUrl: options.documentUrl } : {}),
       ...(options.documentName !== undefined ? { documentName: options.documentName } : {}),

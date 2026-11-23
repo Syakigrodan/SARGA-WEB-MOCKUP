@@ -9,6 +9,7 @@ import authRoutes from './routes/auth.routes';
 import itemRoutes from './routes/item.routes';
 import loanRoutes from './routes/loan.routes';
 import membershipRoutes from './routes/membership.routes';
+import organizationRoutes from './routes/organization.routes';
 import uploadRoutes from './routes/upload.routes';
 import { errorHandler } from './middlewares/error.middleware';
 
@@ -81,6 +82,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/items', itemRoutes);
 app.use('/api/v1/loans', loanRoutes);
 app.use('/api/v1/memberships', membershipRoutes);
+app.use('/api/v1/organizations', organizationRoutes);
 app.use('/api/v1/uploads', uploadRoutes);
 
 // Error Middleware

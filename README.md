@@ -135,6 +135,7 @@ Base URL: `http://localhost:5000/api/v1`. Endpoint yang membutuhkan konteks orga
 | `GET` | `/announcements` | Daftar pengumuman organisasi, terbaru lebih dulu (anggota terverifikasi) |
 | `POST` | `/announcements` | Terbitkan pengumuman `{ title, content }` (admin) |
 | `DELETE` | `/announcements/:id` | Hapus pengumuman organisasi sendiri (admin) |
+| `GET` | `/organizations/:id/structure` | Struktur organisasi: data org, pengurus, dan anggota aktif |
 | `POST` | `/uploads` | Unggah gambar + watermark forensik (`multipart/form-data`, field `image`) |
 
 Contoh body `POST /loans`:
