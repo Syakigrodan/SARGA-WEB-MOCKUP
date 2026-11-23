@@ -113,6 +113,8 @@ Tes memakai database terpisah (`backend/prisma/test.db`) sehingga tidak mengubah
 
 Base URL: `http://localhost:5000/api/v1`. Endpoint yang membutuhkan konteks organisasi mengirim header `x-organization-id` bersama `Authorization: Bearer <token>`.
 
+Panduan lengkap untuk tim frontend (header, format respons, contoh pemanggilan, dan status setiap endpoint): [`docs/api-integration.md`](docs/api-integration.md).
+
 | Method | Endpoint | Keterangan |
 |---|---|---|
 | `POST` | `/auth/register` | Pendaftaran anggota dengan kode undangan |

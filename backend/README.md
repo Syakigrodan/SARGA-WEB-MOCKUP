@@ -2,6 +2,8 @@
 
 RESTful API backend untuk **SARGA (Platform Peminjaman dan Berbagi Barang untuk Komunitas dan Organisasi)** yang dirancang berdasarkan **SRS v1.2**.
 
+Ringkasan kontrak untuk konsumen API ada di [`docs/api-integration.md`](../docs/api-integration.md); rincian implementasi per modul ada di dokumen ini.
+
 ---
 
 ## 🛠️ Tech Stack (Sesuai SRS Bagian 2.3 & 5.2)

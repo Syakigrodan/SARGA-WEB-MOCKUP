@@ -77,9 +77,11 @@ Hasil build akan berada di direktori `dist/sarga-frontend`.
 
 ---
 
-## 🔗 Endpoint API Backend Terhubung
+## 🔗 Integrasi API Backend
+
+Panduan lengkap untuk frontend — daftar semua endpoint, header yang wajib dikirim, format respons, enum, dan contoh pemanggilan — ada di [`docs/api-integration.md`](../docs/api-integration.md).
+
 - Base URL dev: `http://localhost:5000/api/v1`
-- Autentikasi otomatis menyematkan header `Authorization: Bearer <token>` melalui `jwtInterceptor`.
-- Pendaftaran dasar memakai `POST /auth/register` dengan kode undangan; OTP WhatsApp dan unggah dokumen belum tersedia.
-- Katalog memakai `GET /items` dan `GET /items/:id`; pendaftaran barang memakai `POST /items`.
-- Filter kategori, unggah foto, edit/hapus barang, serta endpoint pinjaman dan administrasi belum tersedia.
+- `jwtInterceptor` menyematkan `Authorization: Bearer <token>`. Selain itu, kirim header `x-organization-id` untuk endpoint yang berkonteks organisasi; contoh interceptor ada di panduan.
+- Sudah tersedia: auth, barang/katalog, pinjaman, verifikasi & manajemen anggota, struktur organisasi, pengumuman, dan unggah gambar.
+- Belum tersedia: OTP WhatsApp, unggah dokumen pendaftaran lewat API, filter kategori barang, dan direktori organisasi platform admin.
