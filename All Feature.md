@@ -342,13 +342,13 @@ Setiap tugas diformat dengan struktur standar di bawah ini agar rekan tim dapat 
   - **Berkas Terkait:** `backend/src/controllers/loan-query.controller.ts`, `backend/src/services/loan.service.ts`
   - **Catatan Teknis:** Filter status, pencarian `q` untuk monitoring admin, penanda `isOverdue` dan `daysOverdue` tanpa mengubah status tersimpan, serta otorisasi pengurus. Respons list memakai `{ success, count, loans }`.
 
-- [ ] **BE-SKI-11: Endpoint Persetujuan Pinjaman (`PATCH /api/v1/loans/:id/approve`)**
+- [x] **BE-SKI-11: Endpoint Persetujuan Pinjaman (`PATCH /api/v1/loans/:id/approve`)**
   - **Assignee / PIC:** Saki (BE)
-  - **Status:** `Belum Dimulai`
+  - **Status:** `Selesai`
   - **Target Selesai:** 2026-11-26
-  - **Tanggal Selesai:** -
-  - **Berkas Terkait:** `backend/src/controllers/loan.controller.ts`
-  - **Catatan Teknis:** Transaksi atomik Prisma: mutasi status pinjaman ke `AKTIF`, mutasi status barang ke `DIPINJAM`, dan pencatatan audit trail.
+  - **Tanggal Selesai:** 2026-11-23
+  - **Berkas Terkait:** `backend/src/controllers/loan-decision.controller.ts`, `backend/src/routes/loan.routes.ts`
+  - **Catatan Teknis:** Diizinkan untuk pemilik barang atau admin organisasi. Transaksi atomik Prisma mengubah `MENUNGGU` → `AKTIF` dan barang `TERSEDIA` → `DIPINJAM` serta menulis audit `Menyetujui pinjaman`; kegagalan salah satu mutasi memicu rollback 409. Loan lintas organisasi → 404, aktor tanpa izin → 403.
 
 - [ ] **BE-SKI-12: Endpoint Penolakan Pinjaman (`PATCH /api/v1/loans/:id/reject`) & Pembatalan (`cancel`)**
   - **Assignee / PIC:** Saki (BE)

@@ -117,6 +117,12 @@ Kode status yang mungkin: `201` sukses, `400` validasi gagal, `403` keanggotaan 
 
 Respons list: `{ "success": true, "count": 2, "loans": [...] }`. Setiap loan menyertakan `isOverdue` dan `daysOverdue`; keterlambatan hanya penanda dan tidak mengubah `status`. `q` mencari nama/kode barang atau nama peminjam. Nilai `status` yang dikenal: `MENUNGGU`, `DITOLAK`, `DIBATALKAN`, `AKTIF`, `SELESAI`.
 
+### Persetujuan Pinjaman
+
+`PATCH /api/v1/loans/:id/approve` dapat dipanggil oleh pemilik barang atau admin organisasi. Hanya pinjaman `MENUNGGU` dengan barang `TERSEDIA` yang bisa disetujui. Dalam satu transaksi Prisma, status pinjaman menjadi `AKTIF`, status barang menjadi `DIPINJAM`, dan audit `Menyetujui pinjaman` ditulis. Jika salah satu mutasi gagal, seluruh transaksi di-rollback.
+
+Respons sukses: `{ "success": true, "loan": { ... }, "message": "..." }`. Kode status: `200` sukses, `403` bukan pemilik/admin, `404` loan di organisasi lain, `409` state tidak sesuai atau barang tidak tersedia.
+
 ---
 
 ## ✅ Konvensi Pengembangan
