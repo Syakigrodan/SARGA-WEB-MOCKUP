@@ -358,13 +358,13 @@ Setiap tugas diformat dengan struktur standar di bawah ini agar rekan tim dapat 
   - **Berkas Terkait:** `backend/src/controllers/loan-decision.controller.ts`, `backend/src/routes/loan.routes.ts`
   - **Catatan Teknis:** Reject oleh pemilik/admin dengan `rejectionReason` minimal 5 karakter; cancel hanya oleh peminjam. Keduanya hanya untuk `MENUNGGU`, tidak mengubah status barang, dan menulis audit `Menolak pinjaman` / `Membatalkan pinjaman`. Loan lintas org → 404, state salah → 409.
 
-- [ ] **BE-SKI-13: Endpoint Konfirmasi Pengembalian Alat (`PATCH /api/v1/loans/:id/return`)**
+- [x] **BE-SKI-13: Endpoint Konfirmasi Pengembalian Alat (`PATCH /api/v1/loans/:id/return`)**
   - **Assignee / PIC:** Saki (BE)
-  - **Status:** `Belum Dimulai`
+  - **Status:** `Selesai`
   - **Target Selesai:** 2026-11-27
-  - **Tanggal Selesai:** -
-  - **Berkas Terkait:** `backend/src/controllers/loan.controller.ts`
-  - **Catatan Teknis:** Mutasi status pinjaman ke `SELESAI`, mutasi status barang kembali ke `TERSEDIA`, pencatatan timestamp `returnConfirmedAt`.
+  - **Tanggal Selesai:** 2026-11-23
+  - **Berkas Terkait:** `backend/src/controllers/loan-return.controller.ts`, `backend/src/routes/loan.routes.ts`
+  - **Catatan Teknis:** Dipicu pemilik barang atau admin organisasi. Transaksi atomik mengubah `AKTIF` → `SELESAI`, mencatat `returnConfirmedAt`, mengembalikan barang ke `TERSEDIA`, dan menulis audit `Mengonfirmasi pengembalian`. Kegagalan mutasi barang memicu rollback 409. Loan lintas org → 404; peminjam → 403.
 
 - [ ] **BE-SKI-14: Endpoint Pusat Verifikasi Calon Anggota (`GET /pending`, `PATCH /verify`, `PATCH /reject`)**
   - **Assignee / PIC:** Saki (BE)

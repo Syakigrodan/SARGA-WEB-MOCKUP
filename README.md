@@ -127,6 +127,7 @@ Base URL: `http://localhost:5000/api/v1`. Endpoint yang membutuhkan konteks orga
 | `PATCH` | `/loans/:id/approve` | Setujui pinjaman (pemilik barang atau admin) |
 | `PATCH` | `/loans/:id/reject` | Tolak pinjaman dengan alasan (pemilik/admin) |
 | `PATCH` | `/loans/:id/cancel` | Batalkan pengajuan sendiri (peminjam) |
+| `PATCH` | `/loans/:id/return` | Konfirmasi pengembalian (pemilik/admin) |
 
 Contoh body `POST /loans`:
 
