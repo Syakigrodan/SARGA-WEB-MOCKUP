@@ -350,13 +350,13 @@ Setiap tugas diformat dengan struktur standar di bawah ini agar rekan tim dapat 
   - **Berkas Terkait:** `backend/src/controllers/loan-decision.controller.ts`, `backend/src/routes/loan.routes.ts`
   - **Catatan Teknis:** Diizinkan untuk pemilik barang atau admin organisasi. Transaksi atomik Prisma mengubah `MENUNGGU` → `AKTIF` dan barang `TERSEDIA` → `DIPINJAM` serta menulis audit `Menyetujui pinjaman`; kegagalan salah satu mutasi memicu rollback 409. Loan lintas organisasi → 404, aktor tanpa izin → 403.
 
-- [ ] **BE-SKI-12: Endpoint Penolakan Pinjaman (`PATCH /api/v1/loans/:id/reject`) & Pembatalan (`cancel`)**
+- [x] **BE-SKI-12: Endpoint Penolakan Pinjaman (`PATCH /api/v1/loans/:id/reject`) & Pembatalan (`cancel`)**
   - **Assignee / PIC:** Saki (BE)
-  - **Status:** `Belum Dimulai`
+  - **Status:** `Selesai`
   - **Target Selesai:** 2026-11-27
-  - **Tanggal Selesai:** -
-  - **Berkas Terkait:** `backend/src/controllers/loan.controller.ts`
-  - **Catatan Teknis:** Penyimpanan field `rejectionReason` wajib diisi saat ditolak, serta pembatalan oleh peminjam sebelum disetujui.
+  - **Tanggal Selesai:** 2026-11-23
+  - **Berkas Terkait:** `backend/src/controllers/loan-decision.controller.ts`, `backend/src/routes/loan.routes.ts`
+  - **Catatan Teknis:** Reject oleh pemilik/admin dengan `rejectionReason` minimal 5 karakter; cancel hanya oleh peminjam. Keduanya hanya untuk `MENUNGGU`, tidak mengubah status barang, dan menulis audit `Menolak pinjaman` / `Membatalkan pinjaman`. Loan lintas org → 404, state salah → 409.
 
 - [ ] **BE-SKI-13: Endpoint Konfirmasi Pengembalian Alat (`PATCH /api/v1/loans/:id/return`)**
   - **Assignee / PIC:** Saki (BE)

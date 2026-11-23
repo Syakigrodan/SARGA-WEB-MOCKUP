@@ -125,6 +125,8 @@ Base URL: `http://localhost:5000/api/v1`. Endpoint yang membutuhkan konteks orga
 | `GET` | `/loans/me` | Riwayat pinjaman peminjam, bisa difilter `?status=` |
 | `GET` | `/loans` | Monitoring admin: filter `?status=`, `?q=`, dan `?overdue=` |
 | `PATCH` | `/loans/:id/approve` | Setujui pinjaman (pemilik barang atau admin) |
+| `PATCH` | `/loans/:id/reject` | Tolak pinjaman dengan alasan (pemilik/admin) |
+| `PATCH` | `/loans/:id/cancel` | Batalkan pengajuan sendiri (peminjam) |
 
 Contoh body `POST /loans`:
 
